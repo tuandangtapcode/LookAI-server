@@ -16,10 +16,12 @@ const env = {
   CLOUDINARY_NAME: String(process.env.CLOUDINARY_NAME),
   CLOUDINARY_KEY: String(process.env.CLOUDINARY_KEY),
   CLOUDINARY_SECRET: String(process.env.CLOUDINARY_SECRET),
+  CLOUDINARY_FOLDER: String(process.env.CLOUDINARY_FOLDER),
   PAYOS_ROOT_API: String(process.env.PAYOS_ROOT_API),
   PAYOS_CLIENT_ID: String(process.env.PAYOS_CLIENT_ID),
   PAYOS_API_KEY: String(process.env.PAYOS_API_KEY),
-  PAYOS_CHECKSUM_KEY: String(process.env.PAYOS_CHECKSUM_KEY)
+  PAYOS_CHECKSUM_KEY: String(process.env.PAYOS_CHECKSUM_KEY),
+  GEMINI_API_KEY: String(process.env.GEMINI_API_KEY)
 }
 
 export default env

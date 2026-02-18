@@ -10,8 +10,8 @@ class SubKeyDTO {
 }
 
 export class CreateSystemkeyDTO {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   keyName: string
 
   @ValidateNested({ each: true })

@@ -2,27 +2,27 @@ import { IsDateString, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 
 import { GenderEnum } from 'src/utils/enum/user'
 
 export class RegisterDTO {
-  @IsEmail()
   @IsNotEmpty()
+  @IsEmail()
   email: string
 
-  @IsString()
   @IsOptional()
+  @IsString()
   avatar: string
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   userName: string
 
-  @IsString()
   @IsOptional()
+  @IsString()
   phone: string
 
-  @IsDateString()
   @IsNotEmpty()
+  @IsDateString()
   dateOfBirth: Date
 
-  @IsEnum(GenderEnum)
   @IsNotEmpty()
+  @IsEnum(GenderEnum)
   gender: GenderEnum
 }

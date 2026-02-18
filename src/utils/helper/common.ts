@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import env from 'src/config/env'
 
 export const response = <T>(data: T, error: boolean, msg: string) => {

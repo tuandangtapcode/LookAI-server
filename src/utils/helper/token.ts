@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import CryptoJS from 'crypto-js'
 import env from '../../config/env'
 import { UserRoleEnum } from '../enum/user'

@@ -7,12 +7,12 @@ import { SystemkeyService } from './systemkey.service'
 export class SystemkeyController {
   constructor(private readonly systemkeyService: SystemkeyService) {}
 
-  @Post('create-systemkey')
+  @Post()
   async createSystemkey(@Body() createSystemkeyDTO: CreateSystemkeyDTO) {
     return await this.systemkeyService.createSystemkey(createSystemkeyDTO)
   }
 
-  @Get('get-list-systemkey')
+  @Get()
   async getListSystemkey() {
     return await this.systemkeyService.getListSystemkey()
   }

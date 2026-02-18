@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { ROLES_KEY } from 'src/decorators/role.decorator'
-import HTTP_RESPONSE from 'src/utils/const/http_response'
+import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { UserRoleEnum } from 'src/utils/enum/user'
 import { ITokenData } from 'src/utils/helper/token'
 

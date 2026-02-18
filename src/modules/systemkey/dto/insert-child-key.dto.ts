@@ -1,11 +1,11 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator'
 
 export class InsertChildkeyDTO {
-  @IsUUID()
   @IsNotEmpty()
+  @IsUUID()
   parentId: string
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   keyName: string
 }

@@ -1,23 +1,29 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { Request, Response } from 'express'
-import HTTP_RESPONSE from 'src/utils/const/http_response'
+import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { UserRoleEnum } from 'src/utils/enum/user'
 import { response } from 'src/utils/helper/common'
 import { encodeData, ITokenData } from 'src/utils/helper/token'
+import { PackageRepository } from '../package/package.repository'
 import { UserRepository } from '../user/user.repository'
 import { LoginDTO } from './dto/login.dto'
 import { RegisterDTO } from './dto/register.dto'
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly packageRepository: PackageRepository
+  ) {}
 
   async register(body: RegisterDTO, res: Response) {
     try {
       const { email } = body
       const userByEmail = await this.userRepository.findOne({ email })
       if (userByEmail) return response({}, true, HTTP_RESPONSE.USER.EMAIL_EXIST)
-      const newUser = await this.userRepository.insertOne({ ...body, role: UserRoleEnum.USER })
+      const defaultPackage = await this.packageRepository.findOne({ quota: 0 })
+      if (!defaultPackage) return response({}, true, HTTP_RESPONSE.PACKAGE.PACKAGE_NOT_EXIST)
+      const newUser = await this.userRepository.createUser(body, UserRoleEnum.USER, defaultPackage)
       const tokenData: ITokenData = {
         id: newUser.id,
         name: newUser.userName,

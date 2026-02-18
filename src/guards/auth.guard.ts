@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Request } from 'express'
-import HTTP_RESPONSE from 'src/utils/const/http_response'
+import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { decodeData } from 'src/utils/helper/token'
 
 @Injectable()

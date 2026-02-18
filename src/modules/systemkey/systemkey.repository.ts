@@ -30,11 +30,11 @@ export class SystemkeyRepository extends BaseRepository<SystemkeyEntity> {
   }
 
   async getMaxChildkey(parentId: string) {
-    const queryBuilder = this.systemkeyRepository
+    const qb = this.systemkeyRepository
       .createQueryBuilder('s')
       .select(['MAX(s.key_value) "max"', 's.parent_id "parentId"'])
       .where('s.parent_id = :parentId', { parentId })
-    const systemkey = await queryBuilder.getRawOne<IMaxChildKey>()
+    const systemkey = await qb.getRawOne<IMaxChildKey>()
     return systemkey
   }
 }
