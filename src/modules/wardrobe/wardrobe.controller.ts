@@ -30,7 +30,7 @@ export class WardrobeController {
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRoleEnum.USER)
   @Get()
-  async getListWardrobe(@Req() req: Request, @Query() params: GetListWardrobeDTO) {
-    return await this.wardrobeService.getListWardrobe(req, params)
+  async getListWardrobe(@Req() req: Request, @Query() query: GetListWardrobeDTO) {
+    return await this.wardrobeService.getListWardrobe(req, query)
   }
 }

@@ -1,5 +1,5 @@
 import { UserSubscriptionStatusEnum } from 'src/utils/enum/user-subscription'
-import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 import BaseModel from '../common/base'
 import { PackageEntity } from '../package/package.entity'
 import { UserEntity } from '../user/user.entity'
@@ -34,15 +34,4 @@ export class UserSubscriptionEntity extends BaseModel {
   @OneToOne(() => PackageEntity)
   @JoinColumn({ name: 'package_id' })
   package: PackageEntity
-
-  @BeforeInsert()
-  setDates() {
-    if (!this.startDate) {
-      this.startDate = new Date()
-    }
-    if (!this.endDate) {
-      this.endDate = new Date(this.startDate)
-      this.endDate.setMonth(this.endDate.getMonth() + 1)
-    }
-  }
 }

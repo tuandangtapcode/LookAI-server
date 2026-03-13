@@ -21,7 +21,7 @@ export class AuthService {
       const { email } = body
       const userByEmail = await this.userRepository.findOne({ email })
       if (userByEmail) return response({}, true, HTTP_RESPONSE.USER.EMAIL_EXIST)
-      const defaultPackage = await this.packageRepository.findOne({ quota: 0 })
+      const defaultPackage = await this.packageRepository.findOne({ price: 0 })
       if (!defaultPackage) return response({}, true, HTTP_RESPONSE.PACKAGE.PACKAGE_NOT_EXIST)
       const newUser = await this.userRepository.createUser(body, UserRoleEnum.USER, defaultPackage)
       const tokenData: ITokenData = {
@@ -44,8 +44,8 @@ export class AuthService {
 
   async login(body: LoginDTO, res: Response) {
     try {
-      const { email } = body
-      const user = await this.userRepository.findOne({ email })
+      const { email, sub } = body
+      const user = await this.userRepository.findOne({ email, sub })
       if (!user) return response({}, true, HTTP_RESPONSE.USER.EMAIL_NOT_EXIST)
       const tokenData: ITokenData = {
         id: user.id,
@@ -76,7 +76,7 @@ export class AuthService {
   async getDetailProfile(req: Request, res: Response) {
     try {
       const { id } = req.user
-      const user = await this.userRepository.getDetailProfile(id)
+      const user = await this.userRepository.getUserById(id)
       if (!user) {
         response({}, true, HTTP_RESPONSE.USER.USER_NOT_EXIST)
         res.clearCookie('token')

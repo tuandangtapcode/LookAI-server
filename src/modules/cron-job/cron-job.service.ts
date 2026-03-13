@@ -26,7 +26,7 @@ export class CronJobService {
             })
           )
         }
-        if (['Premium', 'Basic'].includes(subscriptionPackage.name) && moment().isAfter(subscription.endDate)) {
+        if (subscriptionPackage.price && moment().isAfter(subscription.endDate)) {
           updateSubscriptionPromises.push(
             this.userSubscriptionRepository.updateOne(subscription, {
               usedQuota: 0,

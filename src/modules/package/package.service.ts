@@ -39,12 +39,22 @@ export class PackageService {
 
   async getListPackage(params: GetListPackageDto) {
     try {
-      let query = {}
+      let options = {}
       if (params.isActive) {
-        query = { ...query, isActive: params.isActive }
+        options = { ...options, isActive: params.isActive }
       }
-      const result = (await this.packageRepository.findMany(query)).sort((a, b) => a.price - b.price)
+      const result = (await this.packageRepository.findMany(options)).sort((a, b) => a.price - b.price)
       return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
+    } catch (error) {
+      throw new InternalServerErrorException(error.message)
+    }
+  }
+
+  async getDetailPackage(packageId: string) {
+    try {
+      const packageById = await this.packageRepository.findOne({ id: packageId })
+      if (!packageById) return response({}, true, HTTP_RESPONSE.PACKAGE.PACKAGE_NOT_EXIST)
+      return response(packageById, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
     } catch (error) {
       throw new InternalServerErrorException(error.message)
     }

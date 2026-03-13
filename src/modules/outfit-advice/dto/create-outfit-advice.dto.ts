@@ -28,7 +28,19 @@ export class CreateOutfitAdviceDTO {
 
   @IsNotEmpty()
   @IsString()
-  fashionStyle: string
+  currentStyle: string
+
+  @IsNotEmpty()
+  @IsString()
+  desiredStyle: string
+
+  @IsNotEmpty()
+  @IsString()
+  occupation: string
+
+  @IsNotEmpty()
+  @IsString()
+  place: string
 
   @IsNotEmpty()
   @IsString()

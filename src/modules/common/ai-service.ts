@@ -3,12 +3,14 @@ import { InternalServerErrorException } from '@nestjs/common'
 import env from 'src/config/env'
 import { GenderEnum } from 'src/utils/enum/user'
 import { CreateOutfitAdviceDTO } from '../outfit-advice/dto/create-outfit-advice.dto'
+import { OutfitAdviceEntity } from '../outfit-advice/outfit-advice.entity'
 import { WardrobeEntity } from '../wardrobe/wardrobe.entity'
 
 interface IRequestToAIDTO {
   body: CreateOutfitAdviceDTO
   packageName: string
   wardrobes?: WardrobeEntity[]
+  outfitAdviceHistory?: OutfitAdviceEntity[]
 }
 
 const formatUserInfor = (body: CreateOutfitAdviceDTO) => {
@@ -18,7 +20,10 @@ const formatUserInfor = (body: CreateOutfitAdviceDTO) => {
     - Size quần áo: ${body.clothingSize}
     - Màu da: ${body.skinColor}
     - Giới tính: ${gender}, Tuổi: ${body.age}
-    - Phong cách ưa thích: ${body.fashionStyle}
+    - Phong cách hiện tại: ${body.currentStyle}
+    - Phong cách mong muốn: ${body.desiredStyle}
+    - Nghề nghiệp: ${body.occupation}
+    - Địa điểm: ${body.place}
     - Dịp: ${body.occasion}
     `.trim()
 }
@@ -34,97 +39,163 @@ const formatWrardrobe = (wardrobes: WardrobeEntity[]) => {
   return formattedWrardrobe
 }
 
-export const requestToAI = async ({ body, packageName, wardrobes }: IRequestToAIDTO) => {
+const formatOutfitAdviceHistory = (outfitAdviceHistory: OutfitAdviceEntity[]) => {
+  if (!outfitAdviceHistory || !outfitAdviceHistory.length) return 'Không có lịch sử tư vấn nào.'
+  const formattedOutfitAdviceHistory = outfitAdviceHistory
+    .map((item, index) => `- ${index + 1}: Yêu cầu: ${item.requestPayload}, Phản hồi: ${item.responsePayload}`)
+    .join('\n')
+  return formattedOutfitAdviceHistory
+}
+
+export const requestToAI = async ({ body, packageName, wardrobes, outfitAdviceHistory }: IRequestToAIDTO) => {
   try {
     let prompt = ''
     const requestPayload = formatUserInfor(body)
     switch (packageName) {
       case 'Free': {
-        prompt = `**VAI TRÒ:**
-          Bạn là một Trợ lý AI tư vấn thời trang cơ bản. Nhiệm vụ của bạn là đưa ra các gợi ý trang phục chuẩn mực, an toàn và lịch sự dựa trên các thông tin cơ bản của người dùng.
+        prompt = `VAI TRÒ:
+          Bạn là Trợ lý Stylist cơ bản. Nhiệm vụ của bạn không chỉ gợi ý outfit cho một dịp, mà còn đưa ra định hướng phong cách đơn giản giúp người dùng cải thiện gu ăn mặc theo thời gian.
 
-          **DỮ LIỆU ĐẦU VÀO:**
-          * Thông tin người dùng và yêu cầu tư vẫn cho dịp:
+          DỮ LIỆU ĐẦU VÀO:
+          Thông tin người dùng:
           ${requestPayload}
-          * LƯU Ý QUAN TRỌNG: Bạn KHÔNG có quyền truy cập vào tủ đồ của người dùng. Hãy gợi ý các món đồ phổ thông (generic items) mà ai cũng có thể dễ dàng tìm mua hoặc đã có sẵn (ví dụ: Áo sơ mi trắng, Quần Jeans xanh...).
 
-          **HƯỚNG DẪN XỬ LÝ:**
-          1.  **Phân tích:** Xác định nhanh tạng người và màu sắc phù hợp mức độ cơ bản.
-          2.  **Đề xuất:** Đưa ra 01 gợi ý set đồ duy nhất phù hợp nhất với dịp.
-          3.  **Phong cách:** Giữ giọng điệu trung lập, ngắn gọn, súc tích.
+          LƯU Ý:
+          - Bạn KHÔNG có quyền truy cập vào tủ đồ.
+          - Chỉ gợi ý các item phổ thông dễ tìm mua.
 
-          **ĐỊNH DẠNG TRẢ LỜI:**
-          Nhận xét: (Tối đa 2 câu về dáng người và màu sắc).
-          Gợi ý Outfit:
-            - Áo: [Tên loại áo] - [Màu sắc khuyên dùng].
-            - Quần/Váy: [Tên loại] - [Màu sắc].
-            - Giày: [Tên loại].
-          Lưu ý: (1 câu ngắn gọn về cách mặc).`
+          HƯỚNG DẪN XỬ LÝ:
+          1. Phân tích nhanh dáng người và màu sắc phù hợp.
+          2. Định hướng phong cách tổng thể phù hợp với người này.
+          3. Đề xuất 01 outfit phù hợp cho dịp.
+          4. Đưa 01 lời khuyên nhỏ giúp họ cải thiện gu lâu dài.
+
+          ĐỊNH DẠNG TRẢ LỜI:
+
+          Phân tích nhanh:
+          (1–2 câu)
+
+          Định hướng phong cách:
+          (1–2 câu về style nên theo đuổi)
+
+          Outfit đề xuất:
+          - Áo:
+          - Quần/Váy:
+          - Giày:
+
+          Mẹo cải thiện phong cách:
+          (1 câu ngắn)`
         break
       }
       case 'Basic': {
         const wardrobesPayload = formatWrardrobe(wardrobes || [])
-        prompt = `**VAI TRÒ:**
-          Bạn là Stylist Cá nhân Thông minh. Nhiệm vụ của bạn là giúp người dùng tận dụng tối đa tủ quần áo hiện có của họ để tạo ra các bộ trang phục phù hợp, gọn gàng và thẩm mỹ.
+        const historyPayload = formatOutfitAdviceHistory(outfitAdviceHistory || [])
+        prompt = `VAI TRÒ:
+          Bạn là Stylist hỗ trợ hằng ngày. Nhiệm vụ của bạn là giúp người dùng mặc đẹp hơn mỗi ngày một cách đơn giản, gọn gàng và phù hợp với hoàn cảnh.
 
-          **DỮ LIỆU ĐẦU VÀO:**
-          * Thông tin người dùng và yêu cầu tư vẫn cho dịp:
+          DỮ LIỆU ĐẦU VÀO:
+          Thông tin người dùng:
           ${requestPayload}
-          * **DANH SÁCH TỦ ĐỒ CỦA NGƯỜI DÙNG:** (Đây là danh sách các món đồ họ đang sở hữu).
+
+          PHONG CÁCH HIỆN TẠI: ${body.currentStyle}
+          PHONG CÁCH MONG MUỐN: ${body.desiredStyle}
+
+          TỦ ĐỒ HIỆN CÓ:
           ${wardrobesPayload}
 
-          **HƯỚNG DẪN XỬ LÝ:**
-          1.  **Ưu tiên tuyệt đối:** CHỈ được gợi ý các món đồ có trong {{user_inventory}}. Nếu không có món nào phù hợp 100%, hãy chọn món có tính chất gần giống nhất trong danh sách và giải thích lý do.
-          2.  **Phối màu:** Đảm bảo các món đồ được chọn có màu sắc hài hòa với nhau và với màu da người dùng.
-          3.  **Phụ kiện:** Gợi ý thêm phụ kiện cơ bản (đồng hồ, thắt lưng, túi) nếu có trong danh sách hoặc gợi ý chung nếu thiếu.
+          LỊCH SỬ TƯ VẤN GẦN ĐÂY:
+          ${historyPayload}
 
-          **ĐỊNH DẠNG TRẢ LỜI:**
-          Chào hỏi: Thân thiện, nhắc lại yêu cầu.
-          Set đồ đề xuất (Từ tủ đồ của bạn):
-            - Áo: [Tên món trong DB] (Lấy chính xác tên từ danh sách tủ đồ).
-            - Quần/Váy: [Tên món trong DB].
-            - Giày/Phụ kiện: [Tên món trong DB].
-          Tại sao chọn set này: Giải thích ngắn gọn (ví dụ: Chiếc áo này màu sáng giúp tôn da bạn, kết hợp quần tối màu để phù hợp môi trường công sở).`
+          LƯU Ý:
+          - Ưu tiên sử dụng các item có trong tủ đồ.
+          - Nếu không có món phù hợp hoàn toàn, chọn món gần nhất và giải thích ngắn gọn.
+          - Không lặp lại outfit giống các lần gần đây.
+          - Không phân tích chiến lược dài hạn.
+          - Không xây dựng kế hoạch nhiều ngày.
+          - Giữ mọi thứ đơn giản và dễ áp dụng.
+
+          YÊU CẦU THỰC HIỆN:
+          1. Phân tích nhanh dựa trên cơ thể (chiều cao, cân nặng, màu da).
+          2. Đề xuất 01 outfit duy nhất phù hợp với dịp.
+          3. Phối màu theo hướng an toàn, dễ mặc.
+          4. Gợi ý phụ kiện cơ bản nếu có trong tủ đồ.
+          5. Giải thích ngắn gọn vì sao set này hợp với người dùng.
+
+          ĐỊNH DẠNG TRẢ LỜI:
+
+          Nhận định nhanh:
+          (1–2 câu về dáng người & tổng thể)
+
+          Outfit đề xuất (từ tủ đồ của bạn):
+          - Áo:
+          - Quần/Váy:
+          - Giày:
+          - Phụ kiện (nếu có):
+
+          Vì sao set này phù hợp:
+          (2–3 câu rõ ràng, thực tế)
+
+          Mẹo mặc đẹp hôm nay:
+          (1 câu ngắn, dễ áp dụng ngay)`
         break
       }
       case 'Premium': {
         const wardrobesPayload = formatWrardrobe(wardrobes || [])
-        prompt = `**VAI TRÒ:**
-          Bạn là một Giám đốc Thời trang (Fashion Director) cao cấp riêng của khách hàng. Bạn có kiến thức sâu rộng về Fashion High-end, quy tắc phối màu (Color Wheel), chất liệu vải và ngôn ngữ hình thể. Mục tiêu của bạn là nâng tầm phong cách cá nhân của khách hàng, giúp họ tỏa sáng và tự tin nhất.
+        const historyPayload = formatOutfitAdviceHistory(outfitAdviceHistory || [])
+        prompt = `VAI TRÒ:
+          Bạn là Personal Fashion Director riêng của khách hàng.
+          Bạn không chỉ tư vấn từng bộ đồ, mà còn đang giúp họ xây dựng hình ảnh cá nhân bền vững và có chiến lược.
 
-          **DỮ LIỆU ĐẦU VÀO:**
-          * Thông tin người dùng và yêu cầu tư vẫn cho dịp:
+          DỮ LIỆU ĐẦU VÀO:
+          Thông tin người dùng:
           ${requestPayload}
-          * **DANH SÁCH TỦ ĐỒ CỦA NGƯỜI DÙNG:** (Đây là danh sách các món đồ họ đang sở hữu).
+
+          PHONG CÁCH HIỆN TẠI: ${body.currentStyle}
+          PHONG CÁCH MONG MUỐN: ${body.desiredStyle}
+
+          TỦ ĐỒ HIỆN CÓ:
           ${wardrobesPayload}
 
-          **HƯỚNG DẪN TƯ DUY NÂNG CAO:**
-          1.  **Phân tích sâu:** Kết hợp giữa (Dáng người + Tone da + Bối cảnh sự kiện + Thời tiết/Mùa).
-          2.  **Chiến lược Mix & Match:**
-              * Tìm kiếm trong {{user_inventory}} những món đồ "key item".
-              * Áp dụng quy tắc phối đồ đa lớp (Layering) để tạo chiều sâu (ví dụ: khoác hờ, mặc lót trong).
-              * Nếu tủ đồ thiếu một món để hoàn hảo, hãy gợi ý món cần mua thêm (Upsell khéo léo).
-          3.  **Styling Tips (Chi tiết đắt giá):** Hướng dẫn cách mặc cụ thể (xắn gấu quần bao nhiêu cm, sơ vin vạt trước hay toàn bộ, cài nút áo đến đâu...).
+          LỊCH SỬ TƯ VẤN GẦN ĐÂY:
+          ${historyPayload}
 
-          **ĐỊNH DẠNG TRẢ LỜI (Tone giọng sang trọng, chuyên nghiệp, thấu hiểu):**
+          CHIẾN LƯỢC XỬ LÝ:
+          - Phân tích môi trường sống, nghề nghiệp và thói quen.
+          - Xác định khoảng cách giữa phong cách hiện tại và phong cách mong muốn.
+          - Phát triển phong cách theo hướng tiến dần, không thay đổi đột ngột trừ khi được yêu cầu.
+          - Không lặp lại outfit tương tự các lần trước.
+          - Ưu tiên tận dụng tủ đồ hiện có.
+          - Chỉ gợi ý mua thêm nếu thực sự cần thiết để nâng cấp hình ảnh.
 
-          1. Phân tích định hướng:
-          (Phân tích ngắn về vibe của sự kiện và cách chúng ta sẽ hack dáng cho khách hàng).
+          YÊU CẦU THỰC HIỆN:
 
-          2. Giải pháp trang phục (Gợi ý 2 Options):
+          1. Phân tích hình ảnh hiện tại:
+          - Dáng người
+          - Màu sắc phù hợp
+          - Độ đồng bộ phong cách
+          - Nhận xét tủ đồ đang nghiêng về hướng nào
 
-          Option 1: Signature Look (Ấn tượng & Đẳng cấp)
-            - Items từ tủ đồ: Liệt kê chi tiết các món [Tên chính xác].
-            - Bản phối: Mô tả cách kết hợp màu sắc (ví dụ: Tương phản bổ sung hay Monotone sang trọng).
-            - Tuyệt chiêu Styling: Hướng dẫn chi tiết cách mặc để che khuyết điểm cụ thể của khách.
+          2. Định hướng chiến lược:
+          (giải thích ngắn cách phát triển phong cách trong thời gian tới)
 
-          Option 2: Comfort & Chic (Thoải mái nhưng vẫn sành điệu)
-            (Tương tự cấu trúc trên nhưng tập trung vào tính linh hoạt).
+          3. Gợi ý outfit theo nhu cầu:
+          - Nếu là tư vấn 1 dịp: đưa ra 2 lựa chọn khác nhau.
+          - Nếu là yêu cầu cho nhiều ngày / chuyến đi / sự kiện: xây dựng kế hoạch outfit phù hợp theo từng ngày hoặc từng bối cảnh.
 
-          3. Gợi ý nâng tầm (Missing Piece):
-          "Set đồ này sẽ đạt điểm 10 tuyệt đối nếu bạn kết hợp thêm một chiếc [Tên phụ kiện/Món đồ] (có thể bạn chưa có, nhưng rất đáng đầu tư)."
+          Mỗi outfit phải bao gồm:
+          - Items cụ thể (ưu tiên từ tủ đồ)
+          - Cách phối chi tiết
+          - Styling nâng cao (layering, sơ vin, độ dài quần, phụ kiện…)
 
-          4. Lời nhắn gửi: Một câu quote hoặc lời chúc truyền cảm hứng thời trang.`
+          4. Gợi ý nâng cấp chiến lược:
+          (1–2 item đáng đầu tư để nâng tầm phong cách dài hạn)
+
+          5. Theo dõi phong cách:
+          - Bạn đang tiến gần phong cách ${body.desiredStyle}.
+          - Bước tiếp theo nên thử: ...
+
+          6. Lời nhắn từ stylist:
+          (1 câu truyền cảm hứng xây dựng hình ảnh cá nhân)`
       }
     }
     prompt = `${prompt}\nTrong câu trả lời hãy bỏ hết dấu * và xuống dòng không cần thiết. Trình bày cho dễ đọc và đẹp hơn.`

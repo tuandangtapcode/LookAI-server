@@ -14,8 +14,8 @@ export class WardrobeRepository extends BaseRepository<WardrobeEntity> {
     super(wardrobeRepository)
   }
 
-  async getListWardrobe(params: GetListWardrobeDTO, userId: string) {
-    const { itemCategory, itemTypeId, color, size, isFavourite } = params
+  async getListWardrobe(options: GetListWardrobeDTO, userId: string) {
+    const { itemCategory, itemTypeId, color, size, isFavourite } = options
     const qb = this.wardrobeRepository
       .createQueryBuilder('w')
       .leftJoinAndSelect('w.itemType', 'itemType')
@@ -30,7 +30,7 @@ export class WardrobeRepository extends BaseRepository<WardrobeEntity> {
       qb.andWhere('w.color = :color', { color })
     }
     if (size) {
-      qb.andWhere('w.size = :size', { size })
+      qb.andWhere('w.size LIKE :size', { size: `%${size}%` })
     }
     if (isFavourite) {
       qb.andWhere('w.is_favourite = :isFavourite', { isFavourite })

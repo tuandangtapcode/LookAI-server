@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { Roles } from 'src/decorators/role.decorator'
 import { AuthGuard } from 'src/guards/auth.guard'
 import { RoleGuard } from 'src/guards/role.guard'
@@ -27,7 +27,12 @@ export class PackageController {
   }
 
   @Get()
-  async getListPackage(@Query() params: GetListPackageDto) {
-    return await this.packageService.getListPackage(params)
+  async getListPackage(@Query() query: GetListPackageDto) {
+    return await this.packageService.getListPackage(query)
+  }
+
+  @Get('/:packageId')
+  async getDetailPackage(@Param('packageId') packageId: string) {
+    return await this.packageService.getDetailPackage(packageId)
   }
 }

@@ -4,7 +4,7 @@ import { GenderEnum } from 'src/utils/enum/user'
 export class UpdateProfileDTO {
   @IsOptional()
   @IsString()
-  avatar: string
+  avatar?: string
 
   @IsNotEmpty()
   @IsString()
@@ -12,7 +12,7 @@ export class UpdateProfileDTO {
 
   @IsOptional()
   @IsString()
-  phone: string
+  phone?: string
 
   @IsNotEmpty()
   @IsDateString()
@@ -24,25 +24,45 @@ export class UpdateProfileDTO {
 
   @IsOptional()
   @IsNumber()
-  height: number
+  height?: number
 
   @IsOptional()
   @IsNumber()
-  weight: number
+  weight?: number
 
   @IsOptional()
   @IsNumber()
-  bust: number
+  bust?: number
 
   @IsOptional()
   @IsNumber()
-  waist: number
+  waist?: number
 
   @IsOptional()
   @IsNumber()
-  hip: number
+  hip?: number
 
   @IsOptional()
   @IsString()
-  clothingSize: string
+  clothingSize?: string
+
+  @IsOptional()
+  @IsString()
+  skinColor?: string
+
+  @IsOptional()
+  @IsString()
+  currentStyle?: string
+
+  @IsOptional()
+  @IsString()
+  desiredStyle?: string
+
+  @IsOptional()
+  @IsString()
+  occupation?: string
+
+  @IsOptional()
+  @IsString()
+  place?: string
 }

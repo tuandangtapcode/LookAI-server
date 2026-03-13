@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm'
 
-export class CreatePackagetable1770539865990 implements MigrationInterface {
-  name = 'CreatePackagetable1770539865990'
+export class CreatePackageTable1772420774090 implements MigrationInterface {
+  name = 'CreatePackageTable1772420774090'
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

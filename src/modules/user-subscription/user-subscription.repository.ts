@@ -13,7 +13,7 @@ export class UserSubscriptionRepository extends BaseRepository<UserSubscriptionE
     super(userSubscriptionRepository)
   }
 
-  async getSubscriptionByUser(userId: string) {
+  async getSubscriptionByUserId(userId: string) {
     const qb = this.userSubscriptionRepository
       .createQueryBuilder('us')
       .where('us.user_id = :userId', { userId })

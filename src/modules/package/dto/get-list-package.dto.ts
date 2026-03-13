@@ -6,5 +6,5 @@ export class GetListPackageDto {
   @IsOptional()
   @Type(() => Number)
   @IsEnum(BooleanEnum)
-  isActive: BooleanEnum
+  isActive?: BooleanEnum
 }

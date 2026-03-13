@@ -14,5 +14,5 @@ export class PaginationDTO {
 
   @IsOptional()
   @IsString()
-  textSearch: string
+  textSearch?: string
 }

@@ -53,7 +53,17 @@ const HTTP_RESPONSE = {
   OUTFIT_ADVICE: {
     CREATED_SUCCESS: 'Thêm gợi ý trang phục thành công',
     USED_UP_ALL_AVAILABLE_CONSULTATIONS:
-      'Bạn đã sử dụng hết số lần tư vấn trong gói đăng ký. Vui lòng nâng cấp gói để tiếp tục sử dụng dịch vụ.'
+      'Bạn đã sử dụng hết số lần tư vấn trong gói đăng ký. Vui lòng nâng cấp gói để tiếp tục sử dụng dịch vụ.',
+    OUTFIT_ADVICE_NOT_EXIST: 'Gợi ý trang phục không tồn tại',
+    FEEDBACK_OUTFIT_ADVICE_SUCCESS: 'Phản hồi gợi ý trang phục thành công'
+  },
+  PAYMENT: {
+    CREATE_PAYMENT_SUCCESS: 'Tạo giao dịch thành công'
+  },
+  EXPENSE: {
+    CREATE_EXPENSE_SUCCESS: 'Tạo chi phí thành công',
+    UPDATE_EXPENSE_SUCCESS: 'Cập nhật chi phí thành công',
+    EXPENSE_NOT_EXIST: 'Chi phí không tồn tại'
   }
 }
 

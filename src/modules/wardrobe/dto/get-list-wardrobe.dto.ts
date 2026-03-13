@@ -10,18 +10,18 @@ export class GetListWardrobeDTO {
 
   @IsOptional()
   @IsUUID()
-  itemTypeId: string
+  itemTypeId?: string
 
   @IsOptional()
   @IsString()
-  color: string
+  color?: string
 
   @IsOptional()
   @IsString()
-  size: string
+  size?: string
 
   @IsOptional()
   @Type(() => Number)
   @IsEnum(BooleanEnum)
-  isFavourite: BooleanEnum
+  isFavourite?: BooleanEnum
 }

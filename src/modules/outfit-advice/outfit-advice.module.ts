@@ -10,6 +10,7 @@ import { OutfitAdviceService } from './outfit-advice.service'
 @Module({
   imports: [TypeOrmModule.forFeature([OutfitAdviceEntity]), WardrobeModule, UserSubscriptionModule],
   controllers: [OutfitAdviceController],
-  providers: [OutfitAdviceService, OutfitAdviceRepository]
+  providers: [OutfitAdviceService, OutfitAdviceRepository],
+  exports: [OutfitAdviceService, OutfitAdviceRepository]
 })
 export class OutfitAdviceModule {}

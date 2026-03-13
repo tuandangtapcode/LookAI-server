@@ -8,7 +8,7 @@ export class CreateWardrobeDTO {
 
   @IsOptional()
   @IsUUID()
-  itemTypeId: string
+  itemTypeId?: string
 
   @IsNotEmpty()
   @IsEnum(ItemCategoryEnum)
@@ -24,7 +24,7 @@ export class CreateWardrobeDTO {
 
   @IsOptional()
   @IsString()
-  size: string
+  size?: string
 
   @IsNotEmpty()
   @IsEnum(BooleanEnum)

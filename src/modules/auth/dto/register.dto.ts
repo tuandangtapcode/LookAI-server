@@ -6,9 +6,13 @@ export class RegisterDTO {
   @IsEmail()
   email: string
 
+  @IsNotEmpty()
+  @IsString()
+  sub: string
+
   @IsOptional()
   @IsString()
-  avatar: string
+  avatar?: string
 
   @IsNotEmpty()
   @IsString()
@@ -16,7 +20,7 @@ export class RegisterDTO {
 
   @IsOptional()
   @IsString()
-  phone: string
+  phone?: string
 
   @IsNotEmpty()
   @IsDateString()

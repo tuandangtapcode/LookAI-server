@@ -1,12 +1,14 @@
 import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/utils/enum/user'
-import { Column, Entity, OneToOne } from 'typeorm'
+import { Column, Entity } from 'typeorm'
 import BaseModel from '../common/base'
-import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
 
 @Entity({ name: 'user', schema: 'public' })
 export class UserEntity extends BaseModel {
   @Column({ name: 'email', type: 'nvarchar', length: 255 })
   email: string
+
+  @Column({ name: 'sub', type: 'nvarchar', length: 100 })
+  sub: string
 
   @Column({ name: 'avatar', type: 'text', nullable: true })
   avatar: string
@@ -16,6 +18,9 @@ export class UserEntity extends BaseModel {
 
   @Column({ name: 'phone', type: 'varchar', length: 10, nullable: true })
   phone: string
+
+  @Column({ name: 'skin_color', type: 'varchar', length: 10, nullable: true })
+  skinColor: string
 
   @Column({ name: 'date_of_birth', type: 'datetime' })
   dateOfBirth: Date
@@ -41,12 +46,21 @@ export class UserEntity extends BaseModel {
   @Column({ name: 'clothing_size', type: 'varchar', nullable: true })
   clothingSize: string
 
+  @Column({ name: 'current_style', type: 'nvarchar', length: 255, nullable: true })
+  currentStyle: string
+
+  @Column({ name: 'desired_style', type: 'nvarchar', length: 255, nullable: true })
+  desiredStyle: string
+
+  @Column({ name: 'occupation', type: 'nvarchar', length: 255, nullable: true })
+  occupation: string
+
+  @Column({ name: 'place', type: 'nvarchar', length: 255, nullable: true })
+  place: string
+
   @Column({ name: 'role', type: 'int' })
   role: UserRoleEnum
 
   @Column({ name: 'status', type: 'int', default: AccountStatusEnum.NORMAL })
   status: AccountStatusEnum
-
-  @OneToOne(() => UserSubscriptionEntity, (userSubscription) => userSubscription.user)
-  subscription: UserSubscriptionEntity
 }

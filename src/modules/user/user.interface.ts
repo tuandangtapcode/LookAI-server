@@ -6,6 +6,7 @@ export interface IUser extends IBaseData {
   email: string
   avatar?: string
   userName: string
+  sub: string
   phone?: string
   dateOfBirth: string
   gender: GenderEnum
@@ -15,6 +16,11 @@ export interface IUser extends IBaseData {
   waist?: number
   hip?: number
   clothingSize?: string
+  skinColor?: string
+  currentStyle?: string
+  desiredStyle?: string
+  occupation?: string
+  place?: string
   role: UserRoleEnum
   status: AccountStatusEnum
   subscription: IUserSubscription

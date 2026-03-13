@@ -7,7 +7,7 @@ export class CreatePackageDto {
 
   @IsOptional()
   @IsNumber()
-  duration: number
+  duration?: number
 
   @IsNotEmpty()
   @IsNumber()
