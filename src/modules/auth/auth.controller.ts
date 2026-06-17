@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UseGuards } from '@nestjs/common'
 import type { Request, Response } from 'express'
 import { Roles } from 'src/decorators/role.decorator'
 import { AuthGuard } from 'src/guards/auth.guard'
@@ -18,13 +18,14 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(200)
   async login(@Body() body: LoginDTO, @Res({ passthrough: true }) res: Response) {
     return await this.authService.login(body, res)
   }
 
   @Get('check-auth')
-  checkAuth(@Req() req: Request) {
-    return this.authService.checkAuth(req)
+  checkAuth(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return this.authService.checkAuth(req, res)
   }
 
   @UseGuards(AuthGuard, RoleGuard)

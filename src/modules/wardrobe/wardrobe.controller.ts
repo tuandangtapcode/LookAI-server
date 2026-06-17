@@ -6,6 +6,7 @@ import { RoleGuard } from 'src/guards/role.guard'
 import { UserRoleEnum } from 'src/utils/enum/user'
 import { CreateWardrobeDTO } from './dto/create-wardrobe.dto'
 import { GetListWardrobeDTO } from './dto/get-list-wardrobe.dto'
+import { GetQuantityWardrobeDTO } from './dto/get-quantity-wardrobe.dto'
 import { UpdateWardrobeDTO } from './dto/update-wardrobe.dto'
 import { WardrobeService } from './wardrobe.service'
 
@@ -32,5 +33,12 @@ export class WardrobeController {
   @Get()
   async getListWardrobe(@Req() req: Request, @Query() query: GetListWardrobeDTO) {
     return await this.wardrobeService.getListWardrobe(req, query)
+  }
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRoleEnum.USER)
+  @Get('quantity')
+  async getQuantity(@Req() req: Request, @Query() query: GetQuantityWardrobeDTO) {
+    return await this.wardrobeService.getQuantity(query, req)
   }
 }

@@ -23,8 +23,8 @@ export class OutfitAdviceController {
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRoleEnum.USER)
   @Put('feedback')
-  async feedbackOutfitAdvice(@Body() body: FeedbackOutfitAdviceDTO) {
-    return await this.outfitAdviceService.feedbackOutfitAdvice(body)
+  async feedbackOutfitAdvice(@Req() req: Request, @Body() body: FeedbackOutfitAdviceDTO) {
+    return await this.outfitAdviceService.feedbackOutfitAdvice(req, body)
   }
 
   @UseGuards(AuthGuard, RoleGuard)

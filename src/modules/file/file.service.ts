@@ -3,21 +3,28 @@ import cloudinary from 'src/config/cloudinary'
 import env from 'src/config/env'
 import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { response } from 'src/utils/helper/common'
+import { logError } from 'src/utils/helper/log'
 import * as streamifier from 'streamifier'
+import { LogRepository } from '../log/log.repository'
 
 @Injectable()
 export class FileService {
+  constructor(private readonly logRepository: LogRepository) {}
+
   async uploadSingleFile(file: Express.Multer.File) {
     try {
       return await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream({ folder: env.CLOUDINARY_FOLDER }, (error, result) => {
           // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
           if (error) return reject(error)
+
           resolve(response(result?.secure_url, false, HTTP_RESPONSE.FILE.UPLOAD_FILE_SUCCESS))
         })
+
         streamifier.createReadStream(file.buffer).pipe(uploadStream)
       })
-    } catch (error) {
+    } catch (error: any) {
+      this.logRepository.insertOne(logError({ method: 'FILE SERVICE-uploadSingleFile', error }))
       throw new InternalServerErrorException(error.message)
     }
   }
@@ -32,6 +39,7 @@ export class FileService {
               (error, result) => {
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 if (error) return reject(error)
+
                 resolve({
                   url: result?.secure_url,
 
@@ -39,12 +47,16 @@ export class FileService {
                 })
               }
             )
+
             streamifier.createReadStream(file.buffer).pipe(uploadStream)
           })
       )
+
       const urls = await Promise.all(uploadPromises)
+
       return response(urls, false, HTTP_RESPONSE.FILE.UPLOAD_FILE_SUCCESS)
-    } catch (error) {
+    } catch (error: any) {
+      this.logRepository.insertOne(logError({ method: 'FILE SERVICE-uploadMultipleFile', error }))
       throw new InternalServerErrorException(error.message)
     }
   }

@@ -1,8 +1,9 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator'
+import { PaginationDTO } from 'src/modules/common/dto/pagination.dto'
 import { BooleanEnum, ItemCategoryEnum } from 'src/utils/enum/common'
 
-export class GetListWardrobeDTO {
+export class GetListWardrobeDTO extends PaginationDTO {
   @IsNotEmpty()
   @Type(() => Number)
   @IsEnum(ItemCategoryEnum)

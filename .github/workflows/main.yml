@@ -1,0 +1,48 @@
+name: Build and Deploy To EC2
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/stylist-ai-server:${{ github.sha }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/stylist-ai-server:${{ github.sha }}
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login \
+              -u "${{ secrets.DOCKER_USERNAME }}" \
+              --password-stdin
+
+            docker pull ${{ secrets.DOCKER_USERNAME }}/stylist-ai-server:${{ github.sha }}
+
+            docker stop stylist-ai-server || true
+            docker rm stylist-ai-server || true
+            docker image prune -af || true
+
+            docker run -d \
+            --name stylist-ai-server \
+            --env-file /home/ubuntu/stylist-ai/stylist-ai-server/.env \
+            -v /home/ubuntu/stylist-ai/stylist-ai-server/.env:/app/.env:ro \
+            -p 9998:9998 \
+            ${{ secrets.DOCKER_USERNAME }}/stylist-ai-server:${{ github.sha }}

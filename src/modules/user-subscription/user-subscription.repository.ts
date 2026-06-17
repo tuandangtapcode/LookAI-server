@@ -18,13 +18,17 @@ export class UserSubscriptionRepository extends BaseRepository<UserSubscriptionE
       .createQueryBuilder('us')
       .where('us.user_id = :userId', { userId })
       .leftJoinAndSelect('us.package', 'package')
+
     const result = await qb.getOne()
+
     return result
   }
 
   async getListSubscription() {
     const qb = this.userSubscriptionRepository.createQueryBuilder('us').leftJoinAndSelect('us.package', 'package')
+
     const result = await qb.getMany()
+
     return result
   }
 }

@@ -5,7 +5,8 @@ const HTTP_RESPONSE = {
   },
   AUTHORIZATION: {
     TOKEN_NOT_EXIST: 'Token không tồn tại',
-    TOKEN_WITHOUT_DATA: 'Token không có dữ liệu',
+    TOKEN_EXPIRED: 'Token đã hết hạn',
+    TOKEN_INVALID: 'Token không hợp lệ',
     NO_ACCESS: 'Không có quyền truy cập',
     LOGOUT_SUCCESS: 'Đăng xuất thành công',
     REGISTER_SUCCESS: 'Đăng ký tài khoản thành công',
@@ -23,12 +24,13 @@ const HTTP_RESPONSE = {
     USER_NAME_EXIST: 'Tên tài khoản đã tồn tại',
     USER_NOT_EXIST: 'Người dùng không tồn tại',
     UPDATE_PROFILE_SUCCESS: 'Cập nhật tài khoản thành công',
-    USER_SUBSCRIPTION_NOT_EXIST: 'Người dùng chưa có gói đăng ký'
+    USER_SUBSCRIPTION_NOT_EXIST: 'Người dùng chưa có gói đăng ký',
+    CREATE_USER_SUCCESS: 'Thêm người dùng thành công'
   },
   ITEM_TYPE: {
     CREATED_SUCCESS: 'Thêm loại trang phục thành công',
     ITEM_TYPE_EXIST: 'Loại trang phục đã tồn tại',
-    ITEM_TYPE_NOT_EXIST: 'loại trang phục không tồn tại',
+    ITEM_TYPE_NOT_EXIST: 'Loại trang phục không tồn tại',
     UPDATED_SUCCESS: 'Chỉnh sửa loại trang phục thành công'
   },
   FILE: {
@@ -48,12 +50,13 @@ const HTTP_RESPONSE = {
   USER_SUBSCRIPTION: {
     SUBSCRIPTION_NOT_EXIST: 'Gói đăng ký không tồn tại',
     UPDATE_USER_SUBSCRIPTION_SUCCESS: 'Cập nhật gói đăng ký thành công',
-    USER_SUBSCRIPTION_EXPIRED: 'Gói đăng ký đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng dịch vụ.'
+    USER_SUBSCRIPTION_EXPIRED: 'Gói đăng ký đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng dịch vụ.',
+    USED_UP_ALL_AVAILABLE_CONSULTATIONS:
+      'Bạn đã sử dụng hết số lần tư vấn trong gói đăng ký. Vui lòng gia hạn hoặc nâng cấp gói để tiếp tục sử dụng dịch vụ.',
+    SUBSCRIPTION_EXPIRED: 'Gói đăng ký đã hết hạn. Vui lòng gia hạn hoặc nâng cấp gói để tiếp tục sử dụng dịch vụ.'
   },
   OUTFIT_ADVICE: {
     CREATED_SUCCESS: 'Thêm gợi ý trang phục thành công',
-    USED_UP_ALL_AVAILABLE_CONSULTATIONS:
-      'Bạn đã sử dụng hết số lần tư vấn trong gói đăng ký. Vui lòng nâng cấp gói để tiếp tục sử dụng dịch vụ.',
     OUTFIT_ADVICE_NOT_EXIST: 'Gợi ý trang phục không tồn tại',
     FEEDBACK_OUTFIT_ADVICE_SUCCESS: 'Phản hồi gợi ý trang phục thành công'
   },
@@ -64,6 +67,14 @@ const HTTP_RESPONSE = {
     CREATE_EXPENSE_SUCCESS: 'Tạo chi phí thành công',
     UPDATE_EXPENSE_SUCCESS: 'Cập nhật chi phí thành công',
     EXPENSE_NOT_EXIST: 'Chi phí không tồn tại'
+  },
+  FEEDBACK: {
+    CREATE_FEEDBACK_SUCCESS: 'Tạo phản hồi thành công',
+    UPDATE_FEEDBACK_SUCCESS: 'Cập nhật phản hồi thành công',
+    FEEDBACK_NOT_EXIST: 'Phản hồi không tồn tại'
+  },
+  LOG: {
+    CREATE_LOG_SUCCESS: 'Tạo log thành công'
   }
 }
 

@@ -19,13 +19,15 @@ export class SystemkeyRepository extends BaseRepository<SystemkeyEntity> {
     await this.systemkeyRepository.manager.transaction(async (entityManager) => {
       const { keyName, subKeys } = data
       const systemkeyRepo = entityManager.getRepository(SystemkeyEntity)
+
       const createParentKey = systemkeyRepo.create({ keyName })
       const createdParentKey = await systemkeyRepo.save(createParentKey)
+
       const dataSubKey = subKeys.map((i) => ({
         ...i,
         parentId: createdParentKey.id
       }))
-      this.insertMany(dataSubKey)
+      await this.insertMany(dataSubKey)
     })
   }
 
@@ -34,7 +36,9 @@ export class SystemkeyRepository extends BaseRepository<SystemkeyEntity> {
       .createQueryBuilder('s')
       .select(['MAX(s.key_value) "max"', 's.parent_id "parentId"'])
       .where('s.parent_id = :parentId', { parentId })
+
     const systemkey = await qb.getRawOne<IMaxChildKey>()
+
     return systemkey
   }
 }

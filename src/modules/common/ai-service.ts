@@ -1,7 +1,9 @@
 import { GoogleGenAI } from '@google/genai'
-import { InternalServerErrorException } from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import env from 'src/config/env'
 import { GenderEnum } from 'src/utils/enum/user'
+import { logError } from 'src/utils/helper/log'
+import { LogRepository } from '../log/log.repository'
 import { CreateOutfitAdviceDTO } from '../outfit-advice/dto/create-outfit-advice.dto'
 import { OutfitAdviceEntity } from '../outfit-advice/outfit-advice.entity'
 import { WardrobeEntity } from '../wardrobe/wardrobe.entity'
@@ -13,9 +15,17 @@ interface IRequestToAIDTO {
   outfitAdviceHistory?: OutfitAdviceEntity[]
 }
 
-const formatUserInfor = (body: CreateOutfitAdviceDTO) => {
-  const gender = body.gender === GenderEnum.MALE ? 'Nam' : 'Nữ'
-  return `
+@Injectable()
+export class AIService {
+  private readonly ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
+  private readonly model = 'gemini-2.5-pro'
+
+  constructor(private readonly logRepository: LogRepository) {}
+
+  private formatUserInfor(body: CreateOutfitAdviceDTO) {
+    const gender = body.gender === GenderEnum.MALE ? 'Nam' : 'Nữ'
+
+    return `
     - Chiều cao: ${body.height}cm, Cân nặng: ${body.weight}kg
     - Size quần áo: ${body.clothingSize}
     - Màu da: ${body.skinColor}
@@ -26,34 +36,39 @@ const formatUserInfor = (body: CreateOutfitAdviceDTO) => {
     - Địa điểm: ${body.place}
     - Dịp: ${body.occasion}
     `.trim()
-}
+  }
 
-const formatWrardrobe = (wardrobes: WardrobeEntity[]) => {
-  if (!wardrobes || !wardrobes.length) return 'Không có món đồ nào trong tủ đồ.'
-  const formattedWrardrobe = wardrobes
-    .map(
-      (item, index) =>
-        `- ${index + 1}. Tên: ${item.name}, Loại: ${item?.itemType?.name || 'không xác định'}, Màu sắc: ${item.color}, Size: ${item.size || 'không xác định'}, Ảnh: ${item.image}`
-    )
-    .join('\n')
-  return formattedWrardrobe
-}
+  private formatWrardrobe(wardrobes: WardrobeEntity[]) {
+    if (!wardrobes || !wardrobes.length) return 'Không có món đồ nào trong tủ đồ.'
 
-const formatOutfitAdviceHistory = (outfitAdviceHistory: OutfitAdviceEntity[]) => {
-  if (!outfitAdviceHistory || !outfitAdviceHistory.length) return 'Không có lịch sử tư vấn nào.'
-  const formattedOutfitAdviceHistory = outfitAdviceHistory
-    .map((item, index) => `- ${index + 1}: Yêu cầu: ${item.requestPayload}, Phản hồi: ${item.responsePayload}`)
-    .join('\n')
-  return formattedOutfitAdviceHistory
-}
+    const formattedWrardrobe = wardrobes
+      .map(
+        (item, index) =>
+          `- ${index + 1}. Tên: ${item.name}, Loại: ${item?.itemType?.name || 'không xác định'}, Màu sắc: ${item.color}, Size: ${item.size || 'không xác định'}, Ảnh: ${item.image}`
+      )
+      .join('\n')
 
-export const requestToAI = async ({ body, packageName, wardrobes, outfitAdviceHistory }: IRequestToAIDTO) => {
-  try {
-    let prompt = ''
-    const requestPayload = formatUserInfor(body)
-    switch (packageName) {
-      case 'Free': {
-        prompt = `VAI TRÒ:
+    return formattedWrardrobe
+  }
+
+  private formatOutfitAdviceHistory(outfitAdviceHistory: OutfitAdviceEntity[]) {
+    if (!outfitAdviceHistory || !outfitAdviceHistory.length) return 'Không có lịch sử tư vấn nào.'
+
+    const formattedOutfitAdviceHistory = outfitAdviceHistory
+      .map((item, index) => `- ${index + 1}: Yêu cầu: ${item.requestPayload}, Phản hồi: ${item.responsePayload}`)
+      .join('\n')
+
+    return formattedOutfitAdviceHistory
+  }
+
+  async requestToAI({ body, packageName, wardrobes, outfitAdviceHistory }: IRequestToAIDTO) {
+    try {
+      let prompt = ''
+      const requestPayload = this.formatUserInfor(body)
+
+      switch (packageName) {
+        case 'Free': {
+          prompt = `VAI TRÒ:
           Bạn là Trợ lý Stylist cơ bản. Nhiệm vụ của bạn không chỉ gợi ý outfit cho một dịp, mà còn đưa ra định hướng phong cách đơn giản giúp người dùng cải thiện gu ăn mặc theo thời gian.
 
           DỮ LIỆU ĐẦU VÀO:
@@ -85,12 +100,14 @@ export const requestToAI = async ({ body, packageName, wardrobes, outfitAdviceHi
 
           Mẹo cải thiện phong cách:
           (1 câu ngắn)`
-        break
-      }
-      case 'Basic': {
-        const wardrobesPayload = formatWrardrobe(wardrobes || [])
-        const historyPayload = formatOutfitAdviceHistory(outfitAdviceHistory || [])
-        prompt = `VAI TRÒ:
+
+          break
+        }
+        case 'Basic': {
+          const wardrobesPayload = this.formatWrardrobe(wardrobes || [])
+          const historyPayload = this.formatOutfitAdviceHistory(outfitAdviceHistory || [])
+
+          prompt = `VAI TRÒ:
           Bạn là Stylist hỗ trợ hằng ngày. Nhiệm vụ của bạn là giúp người dùng mặc đẹp hơn mỗi ngày một cách đơn giản, gọn gàng và phù hợp với hoàn cảnh.
 
           DỮ LIỆU ĐẦU VÀO:
@@ -137,12 +154,14 @@ export const requestToAI = async ({ body, packageName, wardrobes, outfitAdviceHi
 
           Mẹo mặc đẹp hôm nay:
           (1 câu ngắn, dễ áp dụng ngay)`
-        break
-      }
-      case 'Premium': {
-        const wardrobesPayload = formatWrardrobe(wardrobes || [])
-        const historyPayload = formatOutfitAdviceHistory(outfitAdviceHistory || [])
-        prompt = `VAI TRÒ:
+
+          break
+        }
+        case 'Premium': {
+          const wardrobesPayload = this.formatWrardrobe(wardrobes || [])
+          const historyPayload = this.formatOutfitAdviceHistory(outfitAdviceHistory || [])
+
+          prompt = `VAI TRÒ:
           Bạn là Personal Fashion Director riêng của khách hàng.
           Bạn không chỉ tư vấn từng bộ đồ, mà còn đang giúp họ xây dựng hình ảnh cá nhân bền vững và có chiến lược.
 
@@ -196,30 +215,37 @@ export const requestToAI = async ({ body, packageName, wardrobes, outfitAdviceHi
 
           6. Lời nhắn từ stylist:
           (1 câu truyền cảm hứng xây dựng hình ảnh cá nhân)`
-      }
-    }
-    prompt = `${prompt}\nTrong câu trả lời hãy bỏ hết dấu * và xuống dòng không cần thiết. Trình bày cho dễ đọc và đẹp hơn.`
-    const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            {
-              text: prompt
-            }
-          ]
+
+          break
         }
-      ]
-    })
-    return {
-      answer: result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '',
-      requestPayload: JSON.stringify(body),
-      inputToken: result?.usageMetadata?.promptTokenCount || 0,
-      outputToken: result?.usageMetadata?.candidatesTokenCount || 0
+      }
+
+      prompt = `${prompt}\nTrong câu trả lời hãy bỏ hết dấu * và xuống dòng không cần thiết. Trình bày cho dễ đọc và đẹp hơn.`
+      const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
+
+      const result = await ai.models.generateContent({
+        model: 'gemini-2.5-pro',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ]
+      })
+
+      return {
+        answer: result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '',
+        requestPayload: JSON.stringify(body),
+        inputToken: result?.usageMetadata?.promptTokenCount || 0,
+        outputToken: result?.usageMetadata?.candidatesTokenCount || 0
+      }
+    } catch (error: any) {
+      this.logRepository.insertOne(logError({ method: 'AI Service-requestToAI', error }))
+      throw new InternalServerErrorException(error.message)
     }
-  } catch (error: any) {
-    throw new InternalServerErrorException(error.message)
   }
 }

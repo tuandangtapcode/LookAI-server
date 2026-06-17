@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { UserRoleEnum } from 'src/utils/enum/user'
 import { Repository } from 'typeorm'
-import { RegisterDTO } from '../auth/dto/register.dto'
 import { BaseRepository } from '../common/base.repository'
-import { PackageEntity } from '../package/package.entity'
-import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
 import { GetListUserDTO } from './dto/get-list-user.dto'
 import { UserEntity } from './user.entity'
 import { IUser } from './user.interface'
@@ -46,39 +43,15 @@ export class UserRepository extends BaseRepository<UserEntity> {
         'u.status as status'
       ])
       .where('u.id = :id', { id })
-    const result = await qb.getRawOne<IUser>()
-    return result
-  }
 
-  async createUser(body: RegisterDTO, role: UserRoleEnum, defaultPackage: PackageEntity) {
-    return await this.userRepository.manager.transaction(async (manager) => {
-      const userRepo = manager.getRepository(UserEntity)
-      const userSubscriptionRepo = manager.getRepository(UserSubscriptionEntity)
-      let createdUser: UserEntity
-      if (role === UserRoleEnum.USER) {
-        const createUser = userRepo.create({ ...body, role })
-        createdUser = await userRepo.save(createUser)
-        const startDate = new Date()
-        const endDate = new Date()
-        endDate.setDate(endDate.getDate() + defaultPackage.duration)
-        const createUserSubscription = userSubscriptionRepo.create({
-          userId: createdUser.id,
-          packageId: defaultPackage.id,
-          quota: defaultPackage.quota,
-          startDate,
-          endDate
-        })
-        await userSubscriptionRepo.save(createUserSubscription)
-      } else {
-        const createUser = userRepo.create({ ...body, role })
-        createdUser = await userRepo.save(createUser)
-      }
-      return createdUser
-    })
+    const result = await qb.getRawOne<IUser>()
+
+    return result
   }
 
   async getListUser(options: GetListUserDTO) {
     const { pageSize, currentPage, textSearch, gender, yearOfBirth } = options
+
     const qb = this.userRepository
       .createQueryBuilder('u')
       .select([
@@ -100,6 +73,7 @@ export class UserRepository extends BaseRepository<UserEntity> {
       .groupBy('u.id')
       .orderBy('totalInputToken', 'DESC')
       .addOrderBy('totalOutputToken', 'DESC')
+
     if (textSearch) {
       qb.andWhere('u.user_name LIKE :textSearch', { textSearch: `%${textSearch}%` })
     }
@@ -109,7 +83,9 @@ export class UserRepository extends BaseRepository<UserEntity> {
     if (gender) {
       qb.andWhere('u.gender = :gender', { gender })
     }
-    const result = await this.getListWithPagination(qb, pageSize, currentPage)
+
+    const result = await this.getListWithPagination<IUser>(qb, pageSize, currentPage)
+
     return result
   }
 }

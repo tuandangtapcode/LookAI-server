@@ -44,7 +44,7 @@ const bootstrap = async () => {
     })
   )
 
-  await app.listen(env.PORT ?? 9999)
+  await app.listen(env.PORT ?? 9998, '0.0.0.0')
 }
 
 bootstrap()

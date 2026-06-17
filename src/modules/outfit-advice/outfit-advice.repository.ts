@@ -4,9 +4,8 @@ import { Repository } from 'typeorm'
 import { BaseRepository } from '../common/base.repository'
 import { PaginationDTO } from '../common/dto/pagination.dto'
 import { StatisticDTO } from '../common/dto/statistic.dto'
-import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
 import { OutfitAdviceEntity } from './outfit-advice.entity'
-import { ICalculateTokenUsed, ICreateOutfitAdvice, IGetTopTokenUsed } from './outfit-advice.interface'
+import { ICalculateTokenUsed, IGetTopTokenUsed } from './outfit-advice.interface'
 
 @Injectable()
 export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
@@ -17,24 +16,14 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
     super(outfitAdviceRepository)
   }
 
-  async createOutfitAdvice(body: ICreateOutfitAdvice, userSubscriptionId: string) {
-    return this.outfitAdviceRepository.manager.transaction(async (manager) => {
-      const userSubscriptionRepo = manager.getRepository(UserSubscriptionEntity)
-      const outfitAdviceRepo = manager.getRepository(OutfitAdviceEntity)
-      const createOutfitAdvice = outfitAdviceRepo.create(body)
-      await outfitAdviceRepo.save(createOutfitAdvice)
-      await userSubscriptionRepo.update(userSubscriptionId, {
-        usedQuota: () => 'used_quota + 1'
-      })
-    })
-  }
-
   async getListOutfitAdvice(options: PaginationDTO, userId: string, pagination: boolean = true) {
     const { pageSize, currentPage } = options
+
     const qb = this.outfitAdviceRepository
       .createQueryBuilder('oa')
       .where('oa.user_id = :userId', { userId })
       .orderBy('oa.created_at', 'DESC')
+
     if (pagination) {
       qb.select([
         'oa.id as id',
@@ -45,11 +34,15 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
         'p.name as packageName',
         'oa.created_at as createdAt'
       ]).innerJoin('package', 'p', 'p.id = oa.package_id')
+
       const result = await this.getListWithPagination<OutfitAdviceEntity>(qb, pageSize, currentPage)
+
       return result
     }
+
     qb.limit(pageSize).skip((currentPage - 1) * pageSize)
     const result = await qb.getMany()
+
     return result
   }
 
@@ -58,15 +51,19 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
       .createQueryBuilder('oa')
       .select(['SUM(oa.input_token) as totalInputToken', 'SUM(oa.output_token) as totalOutputToken'])
       .groupBy('oa.user_id')
+
     const result = await qb.getRawOne<ICalculateTokenUsed>()
+
     if (result) {
       return result
     }
+
     return { totalInputToken: 0, totalOutputToken: 0 }
   }
 
   async getTopTokenUsed(options: StatisticDTO) {
     const { forMonth, forYear } = options
+
     const qb = this.outfitAdviceRepository
       .createQueryBuilder('oa')
       .select([
@@ -79,10 +76,13 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
       .orderBy('totalInputToken', 'DESC')
       .groupBy('oa.user_id')
       .limit(5)
+
     if (forMonth && forYear) {
       qb.where('MONTH(oa.created_at) = :forMonth', { forMonth }).andWhere('YEAR(oa.created_at) = :forYear', { forYear })
     }
+
     const result = await qb.getRawMany<IGetTopTokenUsed>()
+
     return result
   }
 }

@@ -11,3 +11,9 @@ export interface IWardrobe {
   size: string
   isFavourite: BooleanEnum
 }
+
+export interface IGetQuantityByItemCategory {
+  itemCategory: ItemCategoryEnum
+  itemTypeId: string
+  quantity: number
+}

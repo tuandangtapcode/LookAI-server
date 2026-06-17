@@ -17,6 +17,7 @@ export class SubscriptionHistoryRepository extends BaseRepository<SubscriptionHi
 
   async getUserSubscriptionHistory(options: GetUserSubscriptionHistoryDTO) {
     const { currentPage, pageSize, userId } = options
+
     const qb = this.subscriptionHistoryRepository
       .createQueryBuilder('sh')
       .select(['sh.id as id', 'sh.status as status', 'sh.created_at as createdAt'])
@@ -30,7 +31,9 @@ export class SubscriptionHistoryRepository extends BaseRepository<SubscriptionHi
       )
       .innerJoin('package', 'pk', 'pk.id = sh.package_id')
       .where('sh.user_id = :userId', { userId })
-    const result = await this.getListWithPagination<IUserSubscriptionHistory>(qb, currentPage, pageSize)
+
+    const result = await this.getListWithPagination<IUserSubscriptionHistory>(qb, pageSize, currentPage)
+
     return result
   }
 }
