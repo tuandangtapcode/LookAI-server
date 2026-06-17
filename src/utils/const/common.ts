@@ -2,7 +2,7 @@ export const ALLOW_ORIGINS = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:3002',
-  'http://192.168.1.6:3000'
+  'https://stylist-ai.tdtc.io.vn'
 ]
 
 export const TEMPLATE_MAIL = {
