@@ -11,7 +11,7 @@ export class ExpenseEntity extends BaseModel {
   type: ExpenseTypeEnum
 
   @Column({ name: 'description', type: 'text', nullable: true })
-  description: string
+  description?: string
 
   @Column({ name: 'for_month', type: 'int' })
   forMonth: number

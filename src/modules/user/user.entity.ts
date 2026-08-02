@@ -11,16 +11,16 @@ export class UserEntity extends BaseModel {
   sub: string
 
   @Column({ name: 'avatar', type: 'text', nullable: true })
-  avatar: string
+  avatar?: string
 
   @Column({ name: 'user_name', type: 'nvarchar', length: 255 })
   userName: string
 
   @Column({ name: 'phone', type: 'varchar', length: 10, nullable: true })
-  phone: string
+  phone?: string
 
   @Column({ name: 'skin_color', type: 'varchar', length: 10, nullable: true })
-  skinColor: string
+  skinColor?: string
 
   @Column({ name: 'date_of_birth', type: 'datetime' })
   dateOfBirth: Date
@@ -29,34 +29,34 @@ export class UserEntity extends BaseModel {
   gender: GenderEnum
 
   @Column({ name: 'height', type: 'int', nullable: true })
-  height: number
+  height?: number
 
   @Column({ name: 'weight', type: 'int', nullable: true })
-  weight: number
+  weight?: number
 
   @Column({ name: 'bust', type: 'int', nullable: true })
-  bust: number
+  bust?: number
 
   @Column({ name: 'waist', type: 'int', nullable: true })
-  waist: number
+  waist?: number
 
   @Column({ name: 'hip', type: 'int', nullable: true })
-  hip: number
+  hip?: number
 
   @Column({ name: 'clothing_size', type: 'varchar', nullable: true })
-  clothingSize: string
+  clothingSize?: string
 
   @Column({ name: 'current_style', type: 'nvarchar', length: 255, nullable: true })
-  currentStyle: string
+  currentStyle?: string
 
   @Column({ name: 'desired_style', type: 'nvarchar', length: 255, nullable: true })
-  desiredStyle: string
+  desiredStyle?: string
 
   @Column({ name: 'occupation', type: 'nvarchar', length: 255, nullable: true })
-  occupation: string
+  occupation?: string
 
   @Column({ name: 'place', type: 'nvarchar', length: 255, nullable: true })
-  place: string
+  place?: string
 
   @Column({ name: 'role', type: 'int' })
   role: UserRoleEnum

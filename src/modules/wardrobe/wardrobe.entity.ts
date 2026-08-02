@@ -13,7 +13,7 @@ export class WardrobeEntity extends BaseModel {
   userId: string
 
   @Column({ name: 'item_type_id', type: 'uuid', nullable: true })
-  itemTypeId: string
+  itemTypeId?: string
 
   @Column({ name: 'item_category', type: 'int' })
   itemCategory: ItemCategoryEnum
@@ -25,7 +25,7 @@ export class WardrobeEntity extends BaseModel {
   color: string
 
   @Column({ name: 'size', type: 'varchar', nullable: true })
-  size: string
+  size?: string
 
   @Column({ name: 'is_favourite', type: 'tinyint' })
   isFavourite: BooleanEnum

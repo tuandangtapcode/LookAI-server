@@ -24,7 +24,7 @@ export class OutfitAdviceEntity extends BaseModel {
   outputToken: number
 
   @Column({ name: 'feedback', type: 'text', nullable: true })
-  feedback: string
+  feedback?: string
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })

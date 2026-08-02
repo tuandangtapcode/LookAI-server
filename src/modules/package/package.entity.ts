@@ -8,7 +8,7 @@ export class PackageEntity extends BaseModel {
   name: string
 
   @Column({ name: 'duration', type: 'int', nullable: true })
-  duration: number
+  duration?: number
 
   @Column({ name: 'price', type: 'int' })
   price: number

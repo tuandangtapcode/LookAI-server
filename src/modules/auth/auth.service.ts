@@ -56,7 +56,8 @@ export class AuthService {
 
       const subscriptionStartDate = new Date()
       const subscriptionEndDate = new Date()
-      subscriptionEndDate.setDate(subscriptionEndDate.getDate() + defaultPackage.duration)
+      const packageDuration = defaultPackage.duration ?? 0
+      subscriptionEndDate.setDate(subscriptionEndDate.getDate() + packageDuration)
 
       const subscriptionToCreate = userSubscriptionRepo.create({
         userId: createdUser.id,

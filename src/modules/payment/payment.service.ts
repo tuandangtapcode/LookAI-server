@@ -57,7 +57,8 @@ export class PaymentService {
 
       const startDate = new Date()
       const endDate = new Date()
-      endDate.setDate(endDate.getDate() + packageDetail.duration)
+      const packageDuration = packageDetail.duration ?? 0
+      endDate.setDate(endDate.getDate() + packageDuration)
 
       await userSubscriptionRepo.update(
         { userId },
