@@ -1,5 +1,5 @@
 import { UserSubscriptionStatusEnum } from 'src/utils/enum/user-subscription'
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
 import BaseModel from '../common/base'
 import { PackageEntity } from '../package/package.entity'
 import { UserEntity } from '../user/user.entity'
@@ -31,7 +31,7 @@ export class UserSubscriptionEntity extends BaseModel {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity
 
-  @OneToOne(() => PackageEntity)
+  @ManyToOne(() => PackageEntity)
   @JoinColumn({ name: 'package_id' })
   package: PackageEntity
 }
