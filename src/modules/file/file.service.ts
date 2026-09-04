@@ -1,63 +1,46 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import cloudinary from 'src/config/cloudinary'
 import env from 'src/config/env'
 import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { response } from 'src/utils/helper/common'
-import { logError } from 'src/utils/helper/log'
 import * as streamifier from 'streamifier'
-import { LogRepository } from '../log/log.repository'
 
 @Injectable()
 export class FileService {
-  constructor(private readonly logRepository: LogRepository) {}
-
   async uploadSingleFile(file: Express.Multer.File) {
-    try {
-      return await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream({ folder: env.CLOUDINARY_FOLDER }, (error, result) => {
-          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-          if (error) return reject(error)
+    return await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream({ folder: env.CLOUDINARY_FOLDER }, (error, result) => {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+        if (error) return reject(error)
 
-          resolve(response(result?.secure_url, false, HTTP_RESPONSE.FILE.UPLOAD_FILE_SUCCESS))
-        })
-
-        streamifier.createReadStream(file.buffer).pipe(uploadStream)
+        resolve(response(result?.secure_url, false, HTTP_RESPONSE.FILE.UPLOAD_FILE_SUCCESS))
       })
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'FILE SERVICE-uploadSingleFile', error }))
-      throw new InternalServerErrorException(error.message)
-    }
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream)
+    })
   }
 
   async uploadMultipleFile(files: Express.Multer.File[]) {
-    try {
-      const uploadPromises = files.map(
-        (file) =>
-          new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.uploader.upload_stream(
-              { folder: env.CLOUDINARY_FOLDER },
-              (error, result) => {
-                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                if (error) return reject(error)
+    const uploadPromises = files.map(
+      (file) =>
+        new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream({ folder: env.CLOUDINARY_FOLDER }, (error, result) => {
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+            if (error) return reject(error)
 
-                resolve({
-                  url: result?.secure_url,
+            resolve({
+              url: result?.secure_url,
 
-                  id: result?.public_id
-                })
-              }
-            )
-
-            streamifier.createReadStream(file.buffer).pipe(uploadStream)
+              id: result?.public_id
+            })
           })
-      )
 
-      const urls = await Promise.all(uploadPromises)
+          streamifier.createReadStream(file.buffer).pipe(uploadStream)
+        })
+    )
 
-      return response(urls, false, HTTP_RESPONSE.FILE.UPLOAD_FILE_SUCCESS)
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'FILE SERVICE-uploadMultipleFile', error }))
-      throw new InternalServerErrorException(error.message)
-    }
+    const urls = await Promise.all(uploadPromises)
+
+    return response(urls, false, HTTP_RESPONSE.FILE.UPLOAD_FILE_SUCCESS)
   }
 }

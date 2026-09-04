@@ -1,7 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { APP_FILTER } from '@nestjs/core'
 import { ScheduleModule } from '@nestjs/schedule'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { HttpExceptionFilter } from './common/filters/http-exceptions.filter'
 import { connectDataSourceConfig } from './config/database'
 import { RequestContextMiddleware } from './middlewares/request-context.middleware'
 import { AuthModule } from './modules/auth/auth.module'
@@ -42,7 +44,8 @@ import { WardrobeModule } from './modules/wardrobe/wardrobe.module'
     DashboardModule,
     FeedbackModule,
     LogModule
-  ]
+  ],
+  providers: [{ provide: APP_FILTER, useClass: HttpExceptionFilter }]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

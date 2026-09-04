@@ -61,11 +61,11 @@ export class CronJobService {
       await Promise.all(updateSubscriptionPromises)
       await Promise.all(subscriptionHistoryPromises)
 
-      this.logRepository.insertOne(
+      this.logRepository.insertLogSafe(
         logCronJob('Cron Job-updateUserSubscription', 'Cron Job-updateUserSubscription success')
       )
     } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'Cron Job-updateUserSubscription', error }))
+      this.logRepository.insertLogSafe(logError({ method: 'Cron Job-updateUserSubscription', error }))
     }
   }
 }

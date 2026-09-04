@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Query, Req, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
 import { Roles } from 'src/decorators/role.decorator'
 import { AuthGuard } from 'src/guards/auth.guard'
@@ -11,6 +11,11 @@ import { UserService } from './user.service'
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('/admin')
+  async createAdminUser() {
+    return await this.userService.createAdminUser()
+  }
 
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRoleEnum.USER, UserRoleEnum.STYLIST)

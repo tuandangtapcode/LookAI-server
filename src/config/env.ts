@@ -2,6 +2,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const env = {
+  // ENVIRONMENT
+  NODE_ENV: process.env.NODE_ENV ?? 'production',
   // PORT
   PORT: Number(process.env.PORT),
   // MAIL

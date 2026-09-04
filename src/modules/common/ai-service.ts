@@ -1,9 +1,7 @@
 import { GoogleGenAI } from '@google/genai'
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import env from 'src/config/env'
 import { GenderEnum } from 'src/utils/enum/user'
-import { logError } from 'src/utils/helper/log'
-import { LogRepository } from '../log/log.repository'
 import { CreateOutfitAdviceDTO } from '../outfit-advice/dto/create-outfit-advice.dto'
 import { OutfitAdviceEntity } from '../outfit-advice/outfit-advice.entity'
 import { WardrobeEntity } from '../wardrobe/wardrobe.entity'
@@ -19,8 +17,6 @@ interface IRequestToAIDTO {
 export class AIService {
   private readonly ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
   private readonly model = 'gemini-2.5-pro'
-
-  constructor(private readonly logRepository: LogRepository) {}
 
   private formatUserInfor(body: CreateOutfitAdviceDTO) {
     const gender = body.gender === GenderEnum.MALE ? 'Nam' : 'Nữ'
@@ -62,13 +58,12 @@ export class AIService {
   }
 
   async requestToAI({ body, packageName, wardrobes, outfitAdviceHistory }: IRequestToAIDTO) {
-    try {
-      let prompt = ''
-      const requestPayload = this.formatUserInfor(body)
+    let prompt = ''
+    const requestPayload = this.formatUserInfor(body)
 
-      switch (packageName) {
-        case 'Free': {
-          prompt = `VAI TRÒ:
+    switch (packageName) {
+      case 'Free': {
+        prompt = `VAI TRÒ:
           Bạn là Trợ lý Stylist cơ bản. Nhiệm vụ của bạn không chỉ gợi ý outfit cho một dịp, mà còn đưa ra định hướng phong cách đơn giản giúp người dùng cải thiện gu ăn mặc theo thời gian.
 
           DỮ LIỆU ĐẦU VÀO:
@@ -101,13 +96,13 @@ export class AIService {
           Mẹo cải thiện phong cách:
           (1 câu ngắn)`
 
-          break
-        }
-        case 'Basic': {
-          const wardrobesPayload = this.formatWrardrobe(wardrobes || [])
-          const historyPayload = this.formatOutfitAdviceHistory(outfitAdviceHistory || [])
+        break
+      }
+      case 'Basic': {
+        const wardrobesPayload = this.formatWrardrobe(wardrobes || [])
+        const historyPayload = this.formatOutfitAdviceHistory(outfitAdviceHistory || [])
 
-          prompt = `VAI TRÒ:
+        prompt = `VAI TRÒ:
           Bạn là Stylist hỗ trợ hằng ngày. Nhiệm vụ của bạn là giúp người dùng mặc đẹp hơn mỗi ngày một cách đơn giản, gọn gàng và phù hợp với hoàn cảnh.
 
           DỮ LIỆU ĐẦU VÀO:
@@ -155,13 +150,13 @@ export class AIService {
           Mẹo mặc đẹp hôm nay:
           (1 câu ngắn, dễ áp dụng ngay)`
 
-          break
-        }
-        case 'Premium': {
-          const wardrobesPayload = this.formatWrardrobe(wardrobes || [])
-          const historyPayload = this.formatOutfitAdviceHistory(outfitAdviceHistory || [])
+        break
+      }
+      case 'Premium': {
+        const wardrobesPayload = this.formatWrardrobe(wardrobes || [])
+        const historyPayload = this.formatOutfitAdviceHistory(outfitAdviceHistory || [])
 
-          prompt = `VAI TRÒ:
+        prompt = `VAI TRÒ:
           Bạn là Personal Fashion Director riêng của khách hàng.
           Bạn không chỉ tư vấn từng bộ đồ, mà còn đang giúp họ xây dựng hình ảnh cá nhân bền vững và có chiến lược.
 
@@ -216,36 +211,32 @@ export class AIService {
           6. Lời nhắn từ stylist:
           (1 câu truyền cảm hứng xây dựng hình ảnh cá nhân)`
 
-          break
+        break
+      }
+    }
+
+    prompt = `${prompt}\nTrong câu trả lời hãy bỏ hết dấu * và xuống dòng không cần thiết. Trình bày cho dễ đọc và đẹp hơn.`
+    const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
+
+    const result = await ai.models.generateContent({
+      model: 'gemini-2.5-pro',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: prompt
+            }
+          ]
         }
-      }
+      ]
+    })
 
-      prompt = `${prompt}\nTrong câu trả lời hãy bỏ hết dấu * và xuống dòng không cần thiết. Trình bày cho dễ đọc và đẹp hơn.`
-      const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY })
-
-      const result = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ]
-      })
-
-      return {
-        answer: result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '',
-        requestPayload: JSON.stringify(body),
-        inputToken: result?.usageMetadata?.promptTokenCount || 0,
-        outputToken: result?.usageMetadata?.candidatesTokenCount || 0
-      }
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'AI Service-requestToAI', error }))
-      throw new InternalServerErrorException(error.message)
+    return {
+      answer: result.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '',
+      requestPayload: JSON.stringify(body),
+      inputToken: result?.usageMetadata?.promptTokenCount || 0,
+      outputToken: result?.usageMetadata?.candidatesTokenCount || 0
     }
   }
 }

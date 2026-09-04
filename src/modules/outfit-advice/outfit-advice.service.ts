@@ -1,12 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Request } from 'express'
 import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { UserSubscriptionStatusEnum } from 'src/utils/enum/user-subscription'
 import { response } from 'src/utils/helper/common'
-import { logError } from 'src/utils/helper/log'
 import { DataSource } from 'typeorm'
 import { AIService } from '../common/ai-service'
-import { LogRepository } from '../log/log.repository'
 import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
 import { UserSubscriptionRepository } from '../user-subscription/user-subscription.repository'
 import { WardrobeEntity } from '../wardrobe/wardrobe.entity'
@@ -24,7 +22,6 @@ export class OutfitAdviceService {
     private readonly outfitAdviceRepository: OutfitAdviceRepository,
     private readonly wardrobeRepository: WardrobeRepository,
     private readonly userSubscriptionRepository: UserSubscriptionRepository,
-    private readonly logRepository: LogRepository,
     private readonly aiService: AIService
   ) {}
 
@@ -88,42 +85,31 @@ export class OutfitAdviceService {
         false,
         HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS
       )
-    } catch (error: any) {
+    } catch (error) {
       await queryRunner.rollbackTransaction()
-      this.logRepository.insertOne(logError({ method: 'OUTFIT ADVICE SERVICE-createOutfitAdvice', error }))
-      throw new InternalServerErrorException(error.message)
+      throw error
     } finally {
       await queryRunner.release()
     }
   }
 
   async feedbackOutfitAdvice(req: Request, body: FeedbackOutfitAdviceDTO) {
-    try {
-      const { outfitAdviceId, feedback } = body
-      const userId = req.user.id
+    const { outfitAdviceId, feedback } = body
+    const userId = req.user.id
 
-      const outfitAdvice = await this.outfitAdviceRepository.findOne({ id: outfitAdviceId, userId })
-      if (!outfitAdvice) return response({}, true, HTTP_RESPONSE.OUTFIT_ADVICE.OUTFIT_ADVICE_NOT_EXIST)
+    const outfitAdvice = await this.outfitAdviceRepository.findOne({ id: outfitAdviceId, userId })
+    if (!outfitAdvice) return response({}, true, HTTP_RESPONSE.OUTFIT_ADVICE.OUTFIT_ADVICE_NOT_EXIST)
 
-      await this.outfitAdviceRepository.updateOne(outfitAdvice, { feedback })
+    await this.outfitAdviceRepository.updateOne(outfitAdvice, { feedback })
 
-      return response({}, false, HTTP_RESPONSE.OUTFIT_ADVICE.FEEDBACK_OUTFIT_ADVICE_SUCCESS)
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'OUTFIT ADVICE SERVICE-feedbackOutfitAdvice', error }))
-      throw new InternalServerErrorException(error.message)
-    }
+    return response({}, false, HTTP_RESPONSE.OUTFIT_ADVICE.FEEDBACK_OUTFIT_ADVICE_SUCCESS)
   }
 
   async getListOutfitAdviceByAdmin(params: GetListOutfitAdviceDTO) {
-    try {
-      const { userId } = params
+    const { userId } = params
 
-      const result = await this.outfitAdviceRepository.getListOutfitAdvice(params, userId)
+    const result = await this.outfitAdviceRepository.getListOutfitAdvice(params, userId)
 
-      return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'OUTFIT ADVICE SERVICE-getListOutfitAdviceByAdmin', error }))
-      throw new InternalServerErrorException(error.message)
-    }
+    return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
   }
 }

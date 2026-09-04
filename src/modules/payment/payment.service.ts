@@ -1,10 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Request } from 'express'
 import HTTP_RESPONSE from 'src/utils/const/http-response'
 import { response } from 'src/utils/helper/common'
-import { logError } from 'src/utils/helper/log'
 import { DataSource } from 'typeorm'
-import { LogRepository } from '../log/log.repository'
 import { PackageRepository } from '../package/package.repository'
 import { SubscriptionHistoryEntity } from '../subscription-history/subscription-history.entity'
 import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
@@ -18,8 +16,7 @@ export class PaymentService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly paymentRepository: PaymentRepository,
-    private readonly packageRepository: PackageRepository,
-    private readonly logRepository: LogRepository
+    private readonly packageRepository: PackageRepository
   ) {}
 
   async createPayment(req: Request, body: CreatePaymentDTO) {
@@ -74,36 +71,25 @@ export class PaymentService {
       await queryRunner.commitTransaction()
 
       return response({}, false, HTTP_RESPONSE.PAYMENT.CREATE_PAYMENT_SUCCESS)
-    } catch (error: any) {
+    } catch (error) {
       await queryRunner.rollbackTransaction()
-      this.logRepository.insertOne(logError({ method: 'PAYMENT SERVICE-createPayment', error }))
-      throw new InternalServerErrorException(error.message)
+      throw error
     } finally {
       await queryRunner.release()
     }
   }
 
   async getListPayment(params: GetListPaymentDTO) {
-    try {
-      const result = await this.paymentRepository.getListPayment(params)
+    const result = await this.paymentRepository.getListPayment(params)
 
-      return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'PAYMENT SERVICE-getListPayment', error }))
-      throw new InternalServerErrorException(error.message)
-    }
+    return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
   }
 
   async getListPaymentByUser(req: Request, params: GetListPaymentDTO) {
-    try {
-      const userId = req.user.id
+    const userId = req.user.id
 
-      const result = await this.paymentRepository.getListPayment(params, userId)
+    const result = await this.paymentRepository.getListPayment(params, userId)
 
-      return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
-    } catch (error: any) {
-      this.logRepository.insertOne(logError({ method: 'PAYMENT SERVICE-getListPaymentByUser', error }))
-      throw new InternalServerErrorException(error.message)
-    }
+    return response(result, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
   }
 }
