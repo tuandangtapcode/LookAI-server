@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsIn, IsNumber, IsOptional } from 'class-validator'
 import { PaginationDTO } from 'src/modules/common/dto/pagination.dto'
-import { ExpenseTypeEnum } from 'src/utils/enum/expense'
+import { ExpenseTypeEnum } from 'src/common/enum/expense'
 
 export class GetListExpenseDTO extends PaginationDTO {
   @IsOptional()

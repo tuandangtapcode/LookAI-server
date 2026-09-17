@@ -1,4 +1,4 @@
-import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/utils/enum/feedback'
+import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/common/enum/feedback'
 import { IBaseData } from '../common/base.interface'
 import { IUser } from '../user/user.interface'
 

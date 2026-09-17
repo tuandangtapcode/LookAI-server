@@ -1,4 +1,4 @@
-import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/utils/enum/user'
+import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/common/enum/user'
 import { IBaseData } from '../common/base.interface'
 import { IUserSubscription } from '../user-subscription/user-subscription.interface'
 

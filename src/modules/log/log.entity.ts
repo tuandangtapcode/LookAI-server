@@ -1,4 +1,4 @@
-import { LogServiceEnum, LogTypeEnum } from 'src/utils/enum/log'
+import { LogServiceEnum, LogTypeEnum } from 'src/common/enum/log'
 import { Column, Entity } from 'typeorm'
 import BaseModel from '../common/base'
 

@@ -5,7 +5,7 @@ import { BaseRepository } from '../common/base.repository'
 import { PaginationDTO } from '../common/dto/pagination.dto'
 import { StatisticDTO } from '../common/dto/statistic.dto'
 import { OutfitAdviceEntity } from './outfit-advice.entity'
-import { ICalculateTokenUsed, IGetTopTokenUsed } from './outfit-advice.interface'
+import { ITokenUsed, ITopTokenUsed } from './outfit-advice.interface'
 
 @Injectable()
 export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
@@ -52,8 +52,7 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
       .select(['SUM(oa.input_token) as totalInputToken', 'SUM(oa.output_token) as totalOutputToken'])
       .groupBy('oa.user_id')
 
-    const result = await qb.getRawOne<ICalculateTokenUsed>()
-
+    const result = await qb.getRawOne<ITokenUsed>()
     if (result) {
       return result
     }
@@ -81,7 +80,45 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
       qb.where('MONTH(oa.created_at) = :forMonth', { forMonth }).andWhere('YEAR(oa.created_at) = :forYear', { forYear })
     }
 
-    const result = await qb.getRawMany<IGetTopTokenUsed>()
+    const result = await qb.getRawMany<ITopTokenUsed>()
+
+    return result
+  }
+
+  async getDetailOutfitAdvice(outfitAdviceId: string, userId: string) {
+    const qb = this.outfitAdviceRepository
+      .createQueryBuilder('oa')
+      .select([
+        'oa.id as id',
+        'oa.request_payload as requestPayload',
+        'oa.response_payload as responsePayload',
+        'oa.parent_advice_id as parentAdviceId',
+        'oa.created_at as createdAt'
+      ])
+      .where('oa.id = :outfitAdviceId ', { outfitAdviceId })
+      .orWhere('oa.parent_advice_id = :outfitAdviceId')
+      .andWhere('oa.user_id = :userId', { userId })
+      .orderBy('oa.createdAt', 'ASC')
+
+    const result = await qb.getRawMany<OutfitAdviceEntity>()
+
+    return result
+  }
+
+  async getListOutfitAdviceByUser(userId: string) {
+    const qb = this.outfitAdviceRepository
+      .createQueryBuilder('oa')
+      .select([
+        'oa.id as id',
+        'oa.request_payload as requestPayload',
+        'oa.response_payload as responsePayload',
+        'oa.created_at as createdAt'
+      ])
+      .where('oa.user_id = :userId', { userId })
+      .andWhere('oa.parent_advice_id IS NULL')
+      .orderBy('oa.created_at', 'DESC')
+
+    const result = await qb.getRawMany<OutfitAdviceEntity>()
 
     return result
   }

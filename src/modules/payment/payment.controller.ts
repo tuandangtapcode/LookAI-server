@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
-import { Roles } from 'src/decorators/role.decorator'
-import { AuthGuard } from 'src/guards/auth.guard'
-import { RoleGuard } from 'src/guards/role.guard'
-import { UserRoleEnum } from 'src/utils/enum/user'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { UserRoleEnum } from 'src/common/enum/user'
+import { AuthGuard } from 'src/common/guards/auth.guard'
+import { RoleGuard } from 'src/common/guards/role.guard'
 import { CreatePaymentDTO } from './dto/create-payment.dto'
 import { GetListPaymentDTO } from './dto/get-list-payment.dto'
 import { PaymentService } from './payment.service'
@@ -21,7 +21,7 @@ export class PaymentController {
 
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRoleEnum.USER)
-  @Get('by-user')
+  @Get('me')
   async getListPaymentByUser(@Req() req: Request, @Query() query: GetListPaymentDTO) {
     return this.paymentService.getListPaymentByUser(req, query)
   }

@@ -9,12 +9,12 @@ export interface ICreateOutfitAdvice {
   outputToken: number
 }
 
-export interface ICalculateTokenUsed {
+export interface ITokenUsed {
   totalInputToken: number
   totalOutputToken: number
 }
 
-export interface IGetTopTokenUsed {
+export interface ITopTokenUsed {
   userId: string
   userName: string
   totalInputToken: number

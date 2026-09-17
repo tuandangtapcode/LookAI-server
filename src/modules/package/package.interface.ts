@@ -1,4 +1,4 @@
-import { BooleanEnum } from 'src/utils/enum/common'
+﻿import { BooleanEnum } from 'src/common/enum/common'
 import { IBaseData } from '../common/base.interface'
 
 export interface IPackage extends IBaseData {
@@ -6,6 +6,7 @@ export interface IPackage extends IBaseData {
   duration?: number
   price: number
   quota: number
+  refine: number
   description: string
   isActive: BooleanEnum
 }

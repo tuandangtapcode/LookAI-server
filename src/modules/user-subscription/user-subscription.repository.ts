@@ -17,7 +17,7 @@ export class UserSubscriptionRepository extends BaseRepository<UserSubscriptionE
     const qb = this.userSubscriptionRepository
       .createQueryBuilder('us')
       .where('us.user_id = :userId', { userId })
-      .leftJoinAndSelect('us.package', 'package')
+      .innerJoinAndSelect('us.package', 'package')
 
     const result = await qb.getOne()
 
@@ -25,7 +25,7 @@ export class UserSubscriptionRepository extends BaseRepository<UserSubscriptionE
   }
 
   async getListSubscription() {
-    const qb = this.userSubscriptionRepository.createQueryBuilder('us').leftJoinAndSelect('us.package', 'package')
+    const qb = this.userSubscriptionRepository.createQueryBuilder('us').innerJoinAndSelect('us.package', 'package')
 
     const result = await qb.getMany()
 

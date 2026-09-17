@@ -1,5 +1,5 @@
-import { SubscriptionHistoryStatusEnum } from 'src/utils/enum/subscription-history'
-import { UserSubscriptionStatusEnum } from 'src/utils/enum/user-subscription'
+import { SubscriptionHistoryStatusEnum } from 'src/common/enum/subscription-history'
+import { UserSubscriptionStatusEnum } from 'src/common/enum/user-subscription'
 import { IBaseData } from '../common/base.interface'
 import { PackageEntity } from '../package/package.entity'
 import { IPackage } from '../package/package.interface'

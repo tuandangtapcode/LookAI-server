@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { AIService } from '../common/ai-service'
+import { AIService } from '../../common/ai.service'
 import { UserSubscriptionModule } from '../user-subscription/user-subscription.module'
 import { WardrobeModule } from '../wardrobe/wardrobe.module'
 import { OutfitAdviceController } from './outfit-advice.controller'

@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
-import { FeedbackTypeEnum } from 'src/utils/enum/feedback'
+import { FeedbackTypeEnum } from 'src/common/enum/feedback'
 
 export class CreateFeedbackDTO {
   @IsNotEmpty()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { UserRoleEnum } from 'src/utils/enum/user'
+import { UserRoleEnum } from 'src/common/enum/user'
 import { Repository } from 'typeorm'
 import { BaseRepository } from '../common/base.repository'
 import { GetListUserDTO } from './dto/get-list-user.dto'

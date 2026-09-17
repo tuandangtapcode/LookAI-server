@@ -1,4 +1,4 @@
-import { BooleanEnum } from 'src/utils/enum/common'
+import { BooleanEnum } from 'src/common/enum/common'
 import { Column, Entity } from 'typeorm'
 import BaseModel from '../common/base'
 
@@ -15,6 +15,9 @@ export class PackageEntity extends BaseModel {
 
   @Column({ name: 'quota', type: 'int' })
   quota: number
+
+  @Column({ name: 'refine', type: 'int' })
+  refine: number
 
   @Column({ name: 'description', type: 'text' })
   description: string

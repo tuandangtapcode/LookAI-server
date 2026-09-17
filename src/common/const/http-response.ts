@@ -58,7 +58,9 @@ const HTTP_RESPONSE = {
   OUTFIT_ADVICE: {
     CREATED_SUCCESS: 'Thêm gợi ý trang phục thành công',
     OUTFIT_ADVICE_NOT_EXIST: 'Gợi ý trang phục không tồn tại',
-    FEEDBACK_OUTFIT_ADVICE_SUCCESS: 'Phản hồi gợi ý trang phục thành công'
+    FEEDBACK_OUTFIT_ADVICE_SUCCESS: 'Phản hồi gợi ý trang phục thành công',
+    REFINE_OUTFIT_ADVICE_SUCCESS: 'Tinh chỉnh gợi ý trang phục thành công',
+    REFINE_LIMIT_REACHED: 'Bạn đã dùng hết số lượt tinh chỉnh cho lần tư vấn này'
   },
   PAYMENT: {
     CREATE_PAYMENT_SUCCESS: 'Tạo giao dịch thành công'

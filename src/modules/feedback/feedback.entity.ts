@@ -1,4 +1,4 @@
-import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/utils/enum/feedback'
+import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/common/enum/feedback'
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 import BaseModel from '../common/base'
 import { UserEntity } from '../user/user.entity'

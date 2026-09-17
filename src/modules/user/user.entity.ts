@@ -1,4 +1,4 @@
-import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/utils/enum/user'
+import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/common/enum/user'
 import { Column, Entity } from 'typeorm'
 import BaseModel from '../common/base'
 

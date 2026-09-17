@@ -1,4 +1,4 @@
-import { ITokenData } from 'src/utils/helper/token'
+import { ITokenData } from 'src/common/helper/token'
 
 declare global {
   namespace Express {

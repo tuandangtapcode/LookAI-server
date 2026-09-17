@@ -1,4 +1,4 @@
-import { UserSubscriptionStatusEnum } from 'src/utils/enum/user-subscription'
+import { UserSubscriptionStatusEnum } from 'src/common/enum/user-subscription'
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
 import BaseModel from '../common/base'
 import { PackageEntity } from '../package/package.entity'

@@ -1,4 +1,4 @@
-import { ItemCategoryEnum } from 'src/utils/enum/common'
+import { ItemCategoryEnum } from 'src/common/enum/common'
 import { Column, Entity } from 'typeorm'
 import BaseModel from '../common/base'
 

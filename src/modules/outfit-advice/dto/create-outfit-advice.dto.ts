@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator'
-import { GenderEnum } from 'src/utils/enum/user'
+import { GenderEnum } from 'src/common/enum/user'
 
 export class CreateOutfitAdviceDTO {
   @IsNotEmpty()

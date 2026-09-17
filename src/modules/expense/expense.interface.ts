@@ -1,11 +1,6 @@
-import { ExpenseTypeEnum } from 'src/utils/enum/expense'
+import { ExpenseTypeEnum } from 'src/common/enum/expense'
 
 export interface IExpenseByType {
   type: ExpenseTypeEnum
   totalAmount: number
-}
-
-export interface ICalculateExpense {
-  total: number
-  analysis: IExpenseByType[]
 }

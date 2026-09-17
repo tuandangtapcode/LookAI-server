@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { requestContext } from '../const/request-context'
-import { LogServiceEnum, LogTypeEnum } from '../enum/log'
+import { LogServiceEnum, LogTypeEnum } from 'src/common/enum/log'
 import { ITokenData } from 'src/modules/auth/auth.interface'
 import { scrubSensitiveData } from './sensitive-data'
 

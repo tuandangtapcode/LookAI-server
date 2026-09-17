@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { Request, Response } from 'express'
 import env from 'src/config/env'
-import HTTP_RESPONSE from 'src/utils/const/http-response'
-import { UserRoleEnum } from 'src/utils/enum/user'
-import { response } from 'src/utils/helper/common'
+import HTTP_RESPONSE from 'src/common/const/http-response'
+import { UserRoleEnum } from 'src/common/enum/user'
+import { response } from 'src/common/helper/common'
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyAccessToken,
   verifyRefreshToken
-} from 'src/utils/helper/token'
+} from 'src/common/helper/token'
 import { DataSource } from 'typeorm'
 import { PackageRepository } from '../package/package.repository'
 import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'

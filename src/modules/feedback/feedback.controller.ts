@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
-import { Roles } from 'src/decorators/role.decorator'
-import { AuthGuard } from 'src/guards/auth.guard'
-import { RoleGuard } from 'src/guards/role.guard'
-import { UserRoleEnum } from 'src/utils/enum/user'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { UserRoleEnum } from 'src/common/enum/user'
+import { AuthGuard } from 'src/common/guards/auth.guard'
+import { RoleGuard } from 'src/common/guards/role.guard'
 import { CreateFeedbackDTO } from './dto/create-feedback.dto'
 import { GetListFeedbackDTO } from './dto/get-list-feedback.dto'
 import { UpdateFeedbackDTO } from './dto/update-feedback.dto'
@@ -36,7 +36,7 @@ export class FeedbackController {
 
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRoleEnum.USER, UserRoleEnum.STYLIST)
-  @Get('by-user')
+  @Get('me')
   async getListFeedbackByUser(@Req() req: Request, @Query() query: GetListFeedbackDTO) {
     return await this.feedbackService.getListFeedbackByUser(req, query)
   }

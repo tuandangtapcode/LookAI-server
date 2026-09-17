@@ -1,4 +1,4 @@
-import { ExpenseTypeEnum } from 'src/utils/enum/expense'
+import { ExpenseTypeEnum } from 'src/common/enum/expense'
 import { Column, Entity } from 'typeorm'
 import BaseModel from '../common/base'
 

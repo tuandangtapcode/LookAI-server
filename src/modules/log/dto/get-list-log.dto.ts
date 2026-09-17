@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional } from 'class-validator'
 import { PaginationDTO } from 'src/modules/common/dto/pagination.dto'
-import { LogServiceEnum, LogTypeEnum } from 'src/utils/enum/log'
+import { LogServiceEnum, LogTypeEnum } from 'src/common/enum/log'
 
 export class GetListLogDTO extends PaginationDTO {
   @IsOptional()

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
-import { Roles } from 'src/decorators/role.decorator'
-import { AuthGuard } from 'src/guards/auth.guard'
-import { RoleGuard } from 'src/guards/role.guard'
-import { UserRoleEnum } from 'src/utils/enum/user'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { UserRoleEnum } from 'src/common/enum/user'
+import { AuthGuard } from 'src/common/guards/auth.guard'
+import { RoleGuard } from 'src/common/guards/role.guard'
 import { CreatePackageDto } from './dto/create-package.dto'
 import { GetListPackageDto } from './dto/get-list-package.dto'
 import { UpdatePackageDto } from './dto/update-package.dto'
@@ -31,7 +31,7 @@ export class PackageController {
     return await this.packageService.getListPackage(query)
   }
 
-  @Get('/:packageId')
+  @Get(':packageId')
   async getDetailPackage(@Param('packageId') packageId: string) {
     return await this.packageService.getDetailPackage(packageId)
   }

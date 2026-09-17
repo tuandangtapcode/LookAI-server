@@ -23,8 +23,8 @@ export class OutfitAdviceEntity extends BaseModel {
   @Column({ name: 'output_token', type: 'bigint' })
   outputToken: number
 
-  @Column({ name: 'feedback', type: 'text', nullable: true })
-  feedback?: string
+  @Column({ name: 'parent_advice_id', type: 'uuid', nullable: true })
+  parentAdviceId?: string
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
@@ -33,4 +33,8 @@ export class OutfitAdviceEntity extends BaseModel {
   @ManyToOne(() => PackageEntity)
   @JoinColumn({ name: 'package_id' })
   package: PackageEntity
+
+  @ManyToOne(() => OutfitAdviceEntity, { nullable: true })
+  @JoinColumn({ name: 'parent_advice_id' })
+  parentAdvice?: OutfitAdviceEntity
 }

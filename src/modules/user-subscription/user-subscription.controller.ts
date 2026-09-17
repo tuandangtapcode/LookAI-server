@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Put, Query, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
-import { Roles } from 'src/decorators/role.decorator'
-import { AuthGuard } from 'src/guards/auth.guard'
-import { RoleGuard } from 'src/guards/role.guard'
-import { UserRoleEnum } from 'src/utils/enum/user'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { UserRoleEnum } from 'src/common/enum/user'
+import { AuthGuard } from 'src/common/guards/auth.guard'
+import { RoleGuard } from 'src/common/guards/role.guard'
 import { GetUserSubscriptionHistoryDTO } from './dto/get-user-subscription-history.dto'
 import { UpdateUserSubscriptionDTO } from './dto/update-user-subscription.dto'
 import { UserSubscriptionService } from './user-subscription.service'
@@ -14,7 +14,7 @@ export class UserSubscriptionController {
 
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRoleEnum.USER)
-  @Get('by-user')
+  @Get('me')
   async getSubscriptionByUser(@Req() req: Request) {
     return await this.userSubscriptionService.getSubscriptionByUser(req)
   }

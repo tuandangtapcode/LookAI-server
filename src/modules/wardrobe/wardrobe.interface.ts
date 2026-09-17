@@ -1,4 +1,4 @@
-import { BooleanEnum, ItemCategoryEnum } from 'src/utils/enum/common'
+import { BooleanEnum, ItemCategoryEnum } from 'src/common/enum/common'
 import { ItemTypeEntity } from '../item-type/item-type.entity'
 
 export interface IWardrobe {

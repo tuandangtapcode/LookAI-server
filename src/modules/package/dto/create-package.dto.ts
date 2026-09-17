@@ -18,6 +18,10 @@ export class CreatePackageDto {
   quota: number
 
   @IsNotEmpty()
+  @IsNumber()
+  refine: number
+
+  @IsNotEmpty()
   @IsString()
   description: string
 }

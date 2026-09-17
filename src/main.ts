@@ -7,7 +7,7 @@ import { rateLimit } from 'express-rate-limit'
 import helmet from 'helmet'
 import { AppModule } from './app.module'
 import env from './config/env'
-import { ALLOW_ORIGINS } from './utils/const/common'
+import { ALLOW_ORIGINS } from './common/const/common'
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule)

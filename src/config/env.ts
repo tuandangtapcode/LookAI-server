@@ -36,6 +36,8 @@ const env = {
   PAYOS_CHECKSUM_KEY: String(process.env.PAYOS_CHECKSUM_KEY),
   // GEMINI
   GEMINI_API_KEY: String(process.env.GEMINI_API_KEY),
+  GEMINI_MODEL_FLASH: process.env.GEMINI_MODEL_FLASH || 'gemini-2.5-flash',
+  GEMINI_MODEL_PRO: process.env.GEMINI_MODEL_PRO || 'gemini-2.5-pro',
   // PLATFORMS
   X_PLATFORM_WEB: String(process.env.X_PLATFORM_WEB),
   X_PLATFORM_MOBILE: String(process.env.X_PLATFORM_MOBILE),

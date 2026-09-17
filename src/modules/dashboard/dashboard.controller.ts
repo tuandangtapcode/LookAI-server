@@ -1,8 +1,8 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common'
-import { Roles } from 'src/decorators/role.decorator'
-import { AuthGuard } from 'src/guards/auth.guard'
-import { RoleGuard } from 'src/guards/role.guard'
-import { UserRoleEnum } from 'src/utils/enum/user'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { UserRoleEnum } from 'src/common/enum/user'
+import { AuthGuard } from 'src/common/guards/auth.guard'
+import { RoleGuard } from 'src/common/guards/role.guard'
 import { StatisticDTO } from '../common/dto/statistic.dto'
 import { DashboardService } from './dashboard.service'
 

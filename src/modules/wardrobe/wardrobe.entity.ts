@@ -1,4 +1,4 @@
-import { BooleanEnum, ItemCategoryEnum } from 'src/utils/enum/common'
+import { BooleanEnum, ItemCategoryEnum } from 'src/common/enum/common'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 import BaseModel from '../common/base'
 import { ItemTypeEntity } from '../item-type/item-type.entity'

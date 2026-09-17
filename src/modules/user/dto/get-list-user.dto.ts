@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
 import { PaginationDTO } from 'src/modules/common/dto/pagination.dto'
-import { GenderEnum } from 'src/utils/enum/user'
+import { GenderEnum } from 'src/common/enum/user'
 
 export class GetListUserDTO extends PaginationDTO {
   @IsOptional()
