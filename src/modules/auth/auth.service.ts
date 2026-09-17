@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Request, Response } from 'express'
-import env from 'src/config/env'
 import HTTP_RESPONSE from 'src/common/const/http-response'
 import { UserRoleEnum } from 'src/common/enum/user'
 import { response } from 'src/common/helper/common'
@@ -10,6 +9,7 @@ import {
   verifyAccessToken,
   verifyRefreshToken
 } from 'src/common/helper/token'
+import env from 'src/config/env'
 import { DataSource } from 'typeorm'
 import { PackageRepository } from '../package/package.repository'
 import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
@@ -53,8 +53,7 @@ export class AuthService {
 
       const subscriptionStartDate = new Date()
       const subscriptionEndDate = new Date()
-      const packageDuration = defaultPackage.duration ?? 0
-      subscriptionEndDate.setDate(subscriptionEndDate.getDate() + packageDuration)
+      subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1)
 
       const subscriptionToCreate = userSubscriptionRepo.create({
         userId: createdUser.id,
