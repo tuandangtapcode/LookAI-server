@@ -1,9 +1,9 @@
 ﻿import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common'
 import { Request, Response } from 'express'
-import env from 'src/config/env'
-import { LogRepository } from 'src/modules/log/log.repository'
 import HTTP_RESPONSE from 'src/common/const/http-response'
 import { logError } from 'src/common/helper/log'
+import env from 'src/config/env'
+import { LogRepository } from 'src/modules/log/log.repository'
 
 /**
  * Bộ lọc lỗi tập trung: mọi exception văng ra từ controller/service đều đi qua đây.
@@ -35,14 +35,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     response.status(status).json({
-      statusCode: status,
-      message: this.resolveClientMessage(error, isHttpException, exceptionResponse),
-      timestamp: new Date().toISOString(),
-      path: request.originalUrl
+      data: {},
+      error: true,
+      msg: this.resolveClientMessage(error, isHttpException, exceptionResponse)
     })
   }
 
-  private resolveClientMessage(error: any, isHttpException: boolean, exceptionResponse: any): string {
+  private resolveClientMessage(error: any, isHttpException: boolean, exceptionResponse: any) {
     // Lỗi nghiệp vụ chủ động throw (NotFoundException, BadRequestException...) luôn an toàn để trả nguyên văn.
     if (isHttpException) {
       const message: string =

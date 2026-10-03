@@ -1,5 +1,5 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator'
-import { OutfitAdviceRatingEnum } from 'src/common/enum/outfit-advice'
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator'
+import { OutfitAdviceRatingEnum } from '../outfit-advice.enum'
 
 export class RefineOutfitAdviceDTO {
   @IsNotEmpty()
@@ -12,5 +12,6 @@ export class RefineOutfitAdviceDTO {
 
   @IsOptional()
   @IsString()
+  @MaxLength(500)
   feedback?: string
 }

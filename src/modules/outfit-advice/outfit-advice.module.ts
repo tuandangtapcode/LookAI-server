@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { AIService } from '../../common/ai.service'
+import { AIModule } from '../ai/ai.module'
 import { UserSubscriptionModule } from '../user-subscription/user-subscription.module'
 import { WardrobeModule } from '../wardrobe/wardrobe.module'
 import { OutfitAdviceController } from './outfit-advice.controller'
@@ -9,9 +9,9 @@ import { OutfitAdviceRepository } from './outfit-advice.repository'
 import { OutfitAdviceService } from './outfit-advice.service'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OutfitAdviceEntity]), WardrobeModule, UserSubscriptionModule],
+  imports: [TypeOrmModule.forFeature([OutfitAdviceEntity]), WardrobeModule, UserSubscriptionModule, AIModule],
   controllers: [OutfitAdviceController],
-  providers: [OutfitAdviceService, OutfitAdviceRepository, AIService],
+  providers: [OutfitAdviceService, OutfitAdviceRepository],
   exports: [OutfitAdviceRepository]
 })
 export class OutfitAdviceModule {}

@@ -1,4 +1,4 @@
-import { UserRoleEnum } from 'src/common/enum/user'
+import { UserRoleEnum } from '../user/user.enum'
 
 export interface ITokenData {
   id: string

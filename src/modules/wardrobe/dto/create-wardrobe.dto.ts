@@ -1,5 +1,7 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator'
-import { BooleanEnum, ItemCategoryEnum } from 'src/common/enum/common'
+import { IsCloudinaryImage } from 'src/common/decorators/cloudinary-image.decorator'
+import { BooleanEnum } from 'src/modules/common/common.enum'
+import { ItemCategoryEnum } from 'src/modules/item-type/item-type.enum'
 
 export class CreateWardrobeDTO {
   @IsNotEmpty()
@@ -16,6 +18,7 @@ export class CreateWardrobeDTO {
 
   @IsNotEmpty()
   @IsString()
+  @IsCloudinaryImage()
   image: string
 
   @IsNotEmpty()

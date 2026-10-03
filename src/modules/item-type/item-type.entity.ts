@@ -1,6 +1,6 @@
-import { ItemCategoryEnum } from 'src/common/enum/common'
 import { Column, Entity } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
+import { ItemCategoryEnum } from './item-type.enum'
 
 @Entity({ name: 'item_type', schema: 'public' })
 export class ItemTypeEntity extends BaseModel {

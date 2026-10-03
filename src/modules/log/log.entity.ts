@@ -1,6 +1,6 @@
-import { LogServiceEnum, LogTypeEnum } from 'src/common/enum/log'
 import { Column, Entity } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
+import { LogServiceEnum, LogTypeEnum } from './log.enum'
 
 @Entity({ name: 'system_log', schema: 'public' })
 export class LogEntity extends BaseModel {

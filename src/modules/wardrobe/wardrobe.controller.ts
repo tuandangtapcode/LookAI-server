@@ -1,9 +1,10 @@
 import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
 import { Roles } from 'src/common/decorators/role.decorator'
-import { UserRoleEnum } from 'src/common/enum/user'
 import { AuthGuard } from 'src/common/guards/auth.guard'
 import { RoleGuard } from 'src/common/guards/role.guard'
+import { UserRoleEnum } from '../user/user.enum'
+import { AnalyzeWardrobeImageDTO } from './dto/analyze-wardrobe-image.dto'
 import { CreateWardrobeDTO } from './dto/create-wardrobe.dto'
 import { GetListWardrobeDTO } from './dto/get-list-wardrobe.dto'
 import { GetQuantityWardrobeDTO } from './dto/get-quantity-wardrobe.dto'
@@ -19,6 +20,13 @@ export class WardrobeController {
   @Post()
   async createWardrobe(@Req() req: Request, @Body() body: CreateWardrobeDTO) {
     return await this.wardrobeService.createWardrobe(req, body)
+  }
+
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRoleEnum.USER)
+  @Post('analyze-image')
+  async analyzeWardrobeImage(@Body() body: AnalyzeWardrobeImageDTO) {
+    return await this.wardrobeService.analyzeWardrobeImage(body)
   }
 
   @UseGuards(AuthGuard, RoleGuard)

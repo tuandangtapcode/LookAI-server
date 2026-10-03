@@ -1,9 +1,9 @@
-import { SubscriptionHistoryStatusEnum } from 'src/common/enum/subscription-history'
-import { UserSubscriptionStatusEnum } from 'src/common/enum/user-subscription'
 import { IBaseData } from '../common/base.interface'
 import { PackageEntity } from '../package/package.entity'
 import { IPackage } from '../package/package.interface'
+import { SubscriptionHistoryStatusEnum } from '../subscription-history/subscription-history.enum'
 import { IUser } from '../user/user.interface'
+import { UserSubscriptionStatusEnum } from './user-subscription.enum'
 
 export interface IUserSubscription extends IBaseData {
   user: IUser

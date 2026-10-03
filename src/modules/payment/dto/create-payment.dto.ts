@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator'
-import { SubscriptionHistoryStatusEnum } from 'src/common/enum/subscription-history'
+import { SubscriptionHistoryStatusEnum } from 'src/modules/subscription-history/subscription-history.enum'
 
 export class CreatePaymentDTO {
   @IsNotEmpty()

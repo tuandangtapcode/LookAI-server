@@ -1,4 +1,11 @@
-import { DeepPartial, FindOptionsWhere, ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm'
+import {
+  DeepPartial,
+  FindOptionsRelations,
+  FindOptionsWhere,
+  ObjectLiteral,
+  Repository,
+  SelectQueryBuilder
+} from 'typeorm'
 
 export class BaseRepository<T extends ObjectLiteral> {
   constructor(protected repository: Repository<T>) {}
@@ -34,8 +41,8 @@ export class BaseRepository<T extends ObjectLiteral> {
     await Promise.all(ids.map((i) => (softDelete ? this.repository.softDelete(i) : this.repository.delete(i))))
   }
 
-  async findMany(where: FindOptionsWhere<T>) {
-    const result = await this.repository.find(where)
+  async findMany(where: FindOptionsWhere<T>, relations?: FindOptionsRelations<T>) {
+    const result = await this.repository.find({ where, relations })
     return result
   }
 

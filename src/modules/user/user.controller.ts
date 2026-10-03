@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, Put, Query, Req, UseGuards } from '@nestjs/common'
 import type { Request } from 'express'
 import { Roles } from 'src/common/decorators/role.decorator'
-import { UserRoleEnum } from 'src/common/enum/user'
 import { AuthGuard } from 'src/common/guards/auth.guard'
 import { RoleGuard } from 'src/common/guards/role.guard'
 import { GetListUserDTO } from './dto/get-list-user.dto'
 import { UpdateProfileDTO } from './dto/update-profile.dto'
+import { UserRoleEnum } from './user.enum'
 import { UserService } from './user.service'
 
 @Controller('user')

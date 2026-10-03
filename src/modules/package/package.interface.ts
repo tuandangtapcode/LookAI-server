@@ -1,5 +1,5 @@
-﻿import { BooleanEnum } from 'src/common/enum/common'
-import { IBaseData } from '../common/base.interface'
+﻿import { IBaseData } from '../common/base.interface'
+import { BooleanEnum } from '../common/common.enum'
 
 export interface IPackage extends IBaseData {
   name: string

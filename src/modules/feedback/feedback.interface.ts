@@ -1,6 +1,6 @@
-import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/common/enum/feedback'
 import { IBaseData } from '../common/base.interface'
 import { IUser } from '../user/user.interface'
+import { FeedbackStatusEnum, FeedbackTypeEnum } from './feedback.enum'
 
 export interface IFeedback extends IBaseData {
   type: FeedbackTypeEnum

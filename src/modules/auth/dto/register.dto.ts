@@ -1,22 +1,10 @@
-import { IsDateString, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
-import { GenderEnum } from 'src/common/enum/user'
+import { IsDateString, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { GenderEnum } from 'src/modules/user/user.enum'
 
 export class RegisterDTO {
   @IsNotEmpty()
-  @IsEmail()
-  email: string
-
-  @IsNotEmpty()
   @IsString()
-  sub: string
-
-  @IsOptional()
-  @IsString()
-  avatar?: string
-
-  @IsNotEmpty()
-  @IsString()
-  userName: string
+  code: string
 
   @IsOptional()
   @IsString()

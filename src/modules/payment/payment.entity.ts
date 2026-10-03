@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
 import { PackageEntity } from '../package/package.entity'
 import { SubscriptionHistoryEntity } from '../subscription-history/subscription-history.entity'
 import { UserEntity } from '../user/user.entity'

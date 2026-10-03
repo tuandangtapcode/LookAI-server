@@ -1,8 +1,8 @@
-import { UserSubscriptionStatusEnum } from 'src/common/enum/user-subscription'
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
 import { PackageEntity } from '../package/package.entity'
 import { UserEntity } from '../user/user.entity'
+import { UserSubscriptionStatusEnum } from './user-subscription.enum'
 
 @Entity({ name: 'user_subscription', schema: 'public' })
 export class UserSubscriptionEntity extends BaseModel {

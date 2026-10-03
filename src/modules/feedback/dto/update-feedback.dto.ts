@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types'
 import { IsEnum, IsNotEmpty, IsOptional, IsUUID } from 'class-validator'
-import { FeedbackStatusEnum } from 'src/common/enum/feedback'
+import { FeedbackStatusEnum } from '../feedback.enum'
 import { CreateFeedbackDTO } from './create-feedback.dto'
 
 export class UpdateFeedbackDTO extends PartialType(CreateFeedbackDTO) {

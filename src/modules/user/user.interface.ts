@@ -1,6 +1,6 @@
-import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/common/enum/user'
 import { IBaseData } from '../common/base.interface'
 import { IUserSubscription } from '../user-subscription/user-subscription.interface'
+import { AccountStatusEnum, GenderEnum, UserRoleEnum } from './user.enum'
 
 export interface IUser extends IBaseData {
   email: string

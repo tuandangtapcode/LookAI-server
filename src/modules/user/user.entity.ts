@@ -1,6 +1,6 @@
-import { AccountStatusEnum, GenderEnum, UserRoleEnum } from 'src/common/enum/user'
 import { Column, Entity } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
+import { AccountStatusEnum, GenderEnum, UserRoleEnum } from './user.enum'
 
 @Entity({ name: 'user', schema: 'public' })
 export class UserEntity extends BaseModel {

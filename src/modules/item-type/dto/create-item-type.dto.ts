@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
-import { ItemCategoryEnum } from 'src/common/enum/common'
+import { ItemCategoryEnum } from '../item-type.enum'
 
 export class CreateItemTypeDTO {
   @IsNotEmpty()

@@ -1,6 +1,6 @@
-import { ExpenseTypeEnum } from 'src/common/enum/expense'
 import { Column, Entity } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
+import { ExpenseTypeEnum } from './expense.enum'
 
 @Entity({ name: 'expense', schema: 'public' })
 export class ExpenseEntity extends BaseModel {

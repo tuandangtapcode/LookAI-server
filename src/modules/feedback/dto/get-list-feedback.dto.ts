@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsEnum, IsOptional } from 'class-validator'
 import { PaginationDTO } from 'src/modules/common/dto/pagination.dto'
-import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/common/enum/feedback'
+import { FeedbackStatusEnum, FeedbackTypeEnum } from '../feedback.enum'
 
 export class GetListFeedbackDTO extends PaginationDTO {
   @IsOptional()

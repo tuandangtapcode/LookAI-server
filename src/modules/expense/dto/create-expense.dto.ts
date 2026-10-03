@@ -1,5 +1,5 @@
 import { IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
-import { ExpenseTypeEnum } from 'src/common/enum/expense'
+import { ExpenseTypeEnum } from '../expense.enum'
 
 export class CreateExpenseDTO {
   @IsNotEmpty()

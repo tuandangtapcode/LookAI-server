@@ -1,7 +1,8 @@
-import { BooleanEnum, ItemCategoryEnum } from 'src/common/enum/common'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
+import { BooleanEnum } from '../common/common.enum'
 import { ItemTypeEntity } from '../item-type/item-type.entity'
+import { ItemCategoryEnum } from '../item-type/item-type.enum'
 import { UserEntity } from '../user/user.entity'
 
 @Entity({ name: 'wardrobe', schema: 'public' })

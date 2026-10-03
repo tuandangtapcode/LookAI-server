@@ -40,6 +40,7 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
       return result
     }
 
+    qb.andWhere('oa.parent_advice_id IS NULL')
     qb.limit(pageSize).skip((currentPage - 1) * pageSize)
     const result = await qb.getMany()
 

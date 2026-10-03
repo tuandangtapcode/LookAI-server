@@ -1,5 +1,4 @@
 const SENSITIVE_KEY_PATTERN = /password|token|secret|otp|cvv|card(number)?|checksum|api[-_]?key|authorization/i
-
 const REDACTED = '***REDACTED***'
 
 export const scrubSensitiveData = (value: unknown, depth = 0): unknown => {

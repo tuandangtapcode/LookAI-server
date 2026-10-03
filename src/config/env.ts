@@ -3,18 +3,21 @@ dotenv.config()
 
 const env = {
   // ENVIRONMENT
-  NODE_ENV: process.env.NODE_ENV ?? 'production',
+  NODE_ENV: process.env.NODE_ENV,
   // PORT
   PORT: Number(process.env.PORT),
   // MAIL
   MAIL_TRANSPORT_HOST: String(process.env.MAIL_TRANSPORT_HOST),
   MAIL_AUTH_USERNAME: String(process.env.MAIL_AUTH_USERNAME),
   MAIL_AUTH_PASSWORD: String(process.env.MAIL_AUTH_PASSWORD),
+  // COOKIES
+  MAX_AGE_ACCESS_TOKEN_COOKIES: Number(process.env.MAX_AGE_ACCESS_TOKEN_COOKIES),
+  MAX_AGE_REFRESH_TOKEN_COOKIES: Number(process.env.MAX_AGE_REFRESH_TOKEN_COOKIES),
   // TOKEN SECRETS
-  PD_ACCESS_TOKEN: String(process.env.PD_ACCESS_TOKEN),
-  PD_REFRESH_TOKEN: String(process.env.PD_REFRESH_TOKEN),
-  PD_ACCESS_TOKEN_EXPIRES_IN: Number(process.env.PD_ACCESS_TOKEN_EXPIRES_IN),
-  PD_REFRESH_TOKEN_EXPIRES_IN: Number(process.env.PD_REFRESH_TOKEN_EXPIRES_IN),
+  MG_ACCESS_TOKEN: String(process.env.MG_ACCESS_TOKEN),
+  MG_REFRESH_TOKEN: String(process.env.MG_REFRESH_TOKEN),
+  MG_ACCESS_TOKEN_EXPIRES_IN: Number(process.env.MG_ACCESS_TOKEN_EXPIRES_IN),
+  MG_REFRESH_TOKEN_EXPIRES_IN: Number(process.env.MG_REFRESH_TOKEN_EXPIRES_IN),
   // TOKEN KEY
   ACCESS_TOKEN: String(process.env.ACCESS_TOKEN),
   REFRESH_TOKEN: String(process.env.REFRESH_TOKEN),
@@ -49,7 +52,11 @@ const env = {
   PHONE: String(process.env.PHONE),
   DATE_OF_BIRTH: String(process.env.DATE_OF_BIRTH),
   GENDER: Number(process.env.GENDER),
-  ROLE: Number(process.env.ROLE)
+  ROLE: Number(process.env.ROLE),
+  // GOOGlE OAUTH
+  GOOGLE_OAUTH_CLIENT_ID: String(process.env.GOOGLE_OAUTH_CLIENT_ID),
+  GOOGLE_OAUTH_CLIENT_SECRET: String(process.env.GOOGLE_OAUTH_CLIENT_SECRET),
+  GOOGLE_OAUTH_CLIENT_REDIRECT_URL: String(process.env.GOOGLE_OAUTH_CLIENT_REDIRECT_URL)
 }
 
 export default env

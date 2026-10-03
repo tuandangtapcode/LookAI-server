@@ -1,9 +1,9 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { Roles } from 'src/common/decorators/role.decorator'
-import { UserRoleEnum } from 'src/common/enum/user'
 import { AuthGuard } from 'src/common/guards/auth.guard'
 import { RoleGuard } from 'src/common/guards/role.guard'
 import { StatisticDTO } from '../common/dto/statistic.dto'
+import { UserRoleEnum } from '../user/user.enum'
 import { DashboardService } from './dashboard.service'
 
 @Controller('dashboard')

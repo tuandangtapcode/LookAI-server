@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
-import { LogServiceEnum, LogTypeEnum } from 'src/common/enum/log'
+import { LogServiceEnum, LogTypeEnum } from '../log.enum'
 
 export class CreateLogDTO {
   @IsNotEmpty()

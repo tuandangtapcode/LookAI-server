@@ -1,5 +1,5 @@
 import { Column, Entity } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
 
 @Entity({ name: 'systemkey', schema: 'public' })
 export class SystemkeyEntity extends BaseModel {

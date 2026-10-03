@@ -1,0 +1,1 @@
+export const GOOGLE_OAUTH_CLIENT = Symbol('GOOGLE_OAUTH_CLIENT')

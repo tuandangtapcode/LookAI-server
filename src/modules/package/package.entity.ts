@@ -1,6 +1,6 @@
-import { BooleanEnum } from 'src/common/enum/common'
 import { Column, Entity } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
+import { BooleanEnum } from '../common/common.enum'
 
 @Entity({ name: 'package', schema: 'public' })
 export class PackageEntity extends BaseModel {

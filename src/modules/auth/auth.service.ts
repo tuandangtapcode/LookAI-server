@@ -1,20 +1,17 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Request, Response } from 'express'
+import { OAuth2Client } from 'google-auth-library'
 import HTTP_RESPONSE from 'src/common/const/http-response'
-import { UserRoleEnum } from 'src/common/enum/user'
 import { response } from 'src/common/helper/common'
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyAccessToken,
-  verifyRefreshToken
-} from 'src/common/helper/token'
+import { generateAccessToken, generateRefreshToken, handleToken } from 'src/common/helper/token'
 import env from 'src/config/env'
 import { DataSource } from 'typeorm'
 import { PackageRepository } from '../package/package.repository'
 import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
 import { UserEntity } from '../user/user.entity'
+import { UserRoleEnum } from '../user/user.enum'
 import { UserRepository } from '../user/user.repository'
+import { GOOGLE_OAUTH_CLIENT } from './auth.constant'
 import { ITokenData } from './auth.interface'
 import { LoginDTO } from './dto/login.dto'
 import { RegisterDTO } from './dto/register.dto'
@@ -24,8 +21,21 @@ export class AuthService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly userRepository: UserRepository,
-    private readonly packageRepository: PackageRepository
+    private readonly packageRepository: PackageRepository,
+    @Inject(GOOGLE_OAUTH_CLIENT)
+    private readonly oauthClient: OAuth2Client
   ) {}
+
+  private async getGoogleInfo(code: string) {
+    const { tokens } = await this.oauthClient.getToken(code)
+    const ticket = await this.oauthClient.verifyIdToken({
+      idToken: tokens.id_token!,
+      audience: env.GOOGLE_OAUTH_CLIENT_ID
+    })
+    const payload = ticket.getPayload()
+
+    return payload
+  }
 
   async register(body: RegisterDTO, res: Response) {
     const queryRunner = this.dataSource.createQueryRunner()
@@ -33,9 +43,12 @@ export class AuthService {
     await queryRunner.startTransaction()
 
     try {
-      const { email } = body
+      const { code } = body
 
-      const existingUser = await this.userRepository.findOne({ email })
+      const googleInfo = await this.getGoogleInfo(code)
+      if (!googleInfo) return response({}, true, HTTP_RESPONSE.USER.USER_NOT_EXIST)
+
+      const existingUser = await this.userRepository.findOne({ sub: googleInfo.sub })
       if (existingUser) {
         return response({}, true, HTTP_RESPONSE.USER.EMAIL_EXIST)
       }
@@ -48,7 +61,14 @@ export class AuthService {
       const userRepo = queryRunner.manager.getRepository(UserEntity)
       const userSubscriptionRepo = queryRunner.manager.getRepository(UserSubscriptionEntity)
 
-      const userToCreate = userRepo.create({ ...body, role: UserRoleEnum.USER })
+      const userToCreate = userRepo.create({
+        ...body,
+        role: UserRoleEnum.USER,
+        sub: googleInfo.sub,
+        userName: googleInfo.name,
+        avatar: googleInfo.picture,
+        email: googleInfo.email
+      })
       const createdUser = await userRepo.save(userToCreate)
 
       const subscriptionStartDate = new Date()
@@ -75,14 +95,14 @@ export class AuthService {
       res.cookie(env.ACCESS_TOKEN, accessToken, {
         httpOnly: true, // cookie chỉ được truy cập bới server
         secure: true, // cookie chỉ được sử dụng với https
-        sameSite: 'none',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        sameSite: 'lax',
+        maxAge: env.MAX_AGE_ACCESS_TOKEN_COOKIES
       })
       res.cookie(env.REFRESH_TOKEN, refreshToken, {
         httpOnly: true, // cookie chỉ được truy cập bới server
         secure: true, // cookie chỉ được sử dụng với https
-        sameSite: 'none',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        sameSite: 'lax',
+        maxAge: env.MAX_AGE_REFRESH_TOKEN_COOKIES
       })
 
       await queryRunner.commitTransaction()
@@ -97,9 +117,12 @@ export class AuthService {
   }
 
   async login(body: LoginDTO, res: Response) {
-    const { email, sub } = body
+    const { code } = body
 
-    const user = await this.userRepository.findOne({ email, sub })
+    const googleInfo = await this.getGoogleInfo(code)
+    if (!googleInfo) return response({}, true, HTTP_RESPONSE.USER.USER_NOT_EXIST)
+
+    const user = await this.userRepository.findOne({ sub: googleInfo.sub })
     if (!user) return response({}, true, HTTP_RESPONSE.USER.EMAIL_NOT_EXIST)
 
     const tokenData: ITokenData = {
@@ -113,65 +136,23 @@ export class AuthService {
     res.cookie(env.ACCESS_TOKEN, accessToken, {
       httpOnly: true, // cookie chỉ được truy cập bới server
       secure: true, // cookie chỉ được sử dụng với https
-      sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      sameSite: 'lax',
+      maxAge: env.MAX_AGE_ACCESS_TOKEN_COOKIES
     })
     res.cookie(env.REFRESH_TOKEN, refreshToken, {
       httpOnly: true, // cookie chỉ được truy cập bới server
       secure: true, // cookie chỉ được sử dụng với https
-      sameSite: 'none',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      sameSite: 'lax',
+      maxAge: env.MAX_AGE_REFRESH_TOKEN_COOKIES
     })
 
     return response({}, false, HTTP_RESPONSE.AUTHORIZATION.LOGIN_SUCCESS)
   }
 
   checkAuth(req: Request, res: Response) {
-    const accessToken = req.cookies[env.ACCESS_TOKEN]
-    if (!accessToken) return response(null, false, HTTP_RESPONSE.AUTHORIZATION.TOKEN_NOT_EXIST)
+    const { error, tokenData, reason } = handleToken(req, res)
 
-    const { data, message } = verifyAccessToken(accessToken)
-    // nếu có dữ liệu trong access token và không có lỗi nào xảy ra thì trả về dữ liệu
-    if (data) return response(data, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
-
-    // nếu có lỗi xảy ra và lỗi đó không phải là lỗi token hết hạn thì trả về invalid token
-    if (message && message !== HTTP_RESPONSE.AUTHORIZATION.TOKEN_EXPIRED) {
-      return response(null, false, HTTP_RESPONSE.AUTHORIZATION.TOKEN_INVALID)
-    }
-
-    // nếu lỗi là lỗi token hết hạn thì kiểm tra refresh token
-    if (message && message === HTTP_RESPONSE.AUTHORIZATION.TOKEN_EXPIRED) {
-      const refreshToken = req.cookies[env.REFRESH_TOKEN]
-      if (!refreshToken) return response(null, false, HTTP_RESPONSE.AUTHORIZATION.TOKEN_NOT_EXIST)
-
-      const { data, message } = verifyRefreshToken(refreshToken)
-      // nếu có lỗi xảy ra khi verify refresh token thì trả về message lỗi
-      if (message) return response(null, false, message)
-
-      // nếu có dữ liệu trong refresh token thì tạo mới access token và refresh token rồi trả về dữ liệu
-      if (data) {
-        const newAccessToken = generateAccessToken(data)
-        const newRefreshToken = generateRefreshToken(data)
-
-        res.cookie(env.ACCESS_TOKEN, newAccessToken, {
-          httpOnly: true, // cookie chỉ được truy cập bới server
-          secure: true, // cookie chỉ được sử dụng với https
-          sameSite: 'none',
-          maxAge: 24 * 60 * 60 * 1000 // 24 hours
-        })
-        res.cookie(env.REFRESH_TOKEN, newRefreshToken, {
-          httpOnly: true, // cookie chỉ được truy cập bới server
-          secure: true, // cookie chỉ được sử dụng với https
-          sameSite: 'none',
-          maxAge: 24 * 60 * 60 * 1000 // 24 hours
-        })
-
-        return response(data, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
-      }
-    }
-
-    // trừ các trường hợp được xử lý ở trên thì các trường hợp còn lại đều trả về invalid token
-    return response(null, false, HTTP_RESPONSE.AUTHORIZATION.TOKEN_INVALID)
+    return response(tokenData, error, reason)
   }
 
   async getDetailProfile(req: Request, res: Response) {

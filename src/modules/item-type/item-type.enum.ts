@@ -1,8 +1,3 @@
-export enum BooleanEnum {
-  TRUE = 1,
-  FALSE = 0
-}
-
 export enum ItemCategoryEnum {
   TOP = 1,
   BOTTOM = 2,

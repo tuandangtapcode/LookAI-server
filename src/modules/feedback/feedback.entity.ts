@@ -1,7 +1,7 @@
-import { FeedbackStatusEnum, FeedbackTypeEnum } from 'src/common/enum/feedback'
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
 import { UserEntity } from '../user/user.entity'
+import { FeedbackStatusEnum, FeedbackTypeEnum } from './feedback.enum'
 
 @Entity({ name: 'feedback', schema: 'public' })
 export class FeedbackEntity extends BaseModel {

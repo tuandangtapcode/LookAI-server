@@ -1,20 +1,18 @@
-import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common'
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express'
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Roles } from 'src/common/decorators/role.decorator'
+import { AuthGuard } from 'src/common/guards/auth.guard'
+import { RoleGuard } from 'src/common/guards/role.guard'
+import { UserRoleEnum } from '../user/user.enum'
 import { FileService } from './file.service'
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post('upload-single-file')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadSingleFile(@UploadedFile() file: Express.Multer.File) {
-    return await this.fileService.uploadSingleFile(file)
-  }
-
-  @Post('upload-multiple-file')
-  @UseInterceptors(FilesInterceptor('files'))
-  async uploadMultipleFile(@UploadedFiles() files: Express.Multer.File[]) {
-    return await this.fileService.uploadMultipleFile(files)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.USER, UserRoleEnum.STYLIST)
+  @Get('upload-url')
+  getUploadUrl() {
+    return this.fileService.getUploadUrl()
   }
 }

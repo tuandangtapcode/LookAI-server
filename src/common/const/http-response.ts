@@ -34,12 +34,17 @@ const HTTP_RESPONSE = {
     UPDATED_SUCCESS: 'Chỉnh sửa loại trang phục thành công'
   },
   FILE: {
-    UPLOAD_FILE_SUCCESS: 'Upload file thành công'
+    UPLOAD_FILE_SUCCESS: 'Upload file thành công',
+    INVALID_IMAGE_URL: 'Đường dẫn ảnh không hợp lệ'
   },
   WARDROBE: {
     CREATED_SUCCESS: 'Thêm trang phục thành công',
     WARDROBE_NOT_EXIST: 'Trang phục không tồn tại',
-    UPDATED_SUCCESS: 'Chỉnh sửa trang phục thành công'
+    UPDATED_SUCCESS: 'Chỉnh sửa trang phục thành công',
+    ANALYZE_IMAGE_SUCCESS: 'Phân tích ảnh thành công',
+    ANALYZE_IMAGE_FAILED: 'Không thể phân tích ảnh, vui lòng thử lại',
+    ITEM_TYPE_NOT_DETECTED: 'Không nhận diện được loại trang phục phù hợp trong ảnh này',
+    IMAGE_NOT_CLOTHING: 'Ảnh không phải là trang phục, vui lòng tải lên ảnh trang phục khác'
   },
   PACKAGE: {
     CREATED_SUCCESS: 'Thêm gói thành công',
@@ -60,7 +65,10 @@ const HTTP_RESPONSE = {
     OUTFIT_ADVICE_NOT_EXIST: 'Gợi ý trang phục không tồn tại',
     FEEDBACK_OUTFIT_ADVICE_SUCCESS: 'Phản hồi gợi ý trang phục thành công',
     REFINE_OUTFIT_ADVICE_SUCCESS: 'Tinh chỉnh gợi ý trang phục thành công',
-    REFINE_LIMIT_REACHED: 'Bạn đã dùng hết số lượt tinh chỉnh cho lần tư vấn này'
+    REFINE_LIMIT_REACHED: 'Bạn đã dùng hết số lượt tinh chỉnh cho lần tư vấn này',
+    REFINE_FEEDBACK_REQUIRED: 'Vui lòng nhập điều bạn muốn tinh chỉnh cho bộ trang phục',
+    INVALID_REFINE_FEEDBACK:
+      'Không xác định được yêu cầu tinh chỉnh. Vui lòng mô tả rõ bạn muốn thay đổi gì cho bộ trang phục (ví dụ: đổi giày, thêm phụ kiện...)'
   },
   PAYMENT: {
     CREATE_PAYMENT_SUCCESS: 'Tạo giao dịch thành công'

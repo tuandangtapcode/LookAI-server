@@ -1,8 +1,8 @@
-import { SubscriptionHistoryStatusEnum } from 'src/common/enum/subscription-history'
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
-import BaseModel from '../common/base'
+import BaseModel from '../common/base.entity'
 import { PackageEntity } from '../package/package.entity'
 import { UserEntity } from '../user/user.entity'
+import { SubscriptionHistoryStatusEnum } from './subscription-history.enum'
 
 @Entity({ name: 'subscription_history', schema: 'public' })
 export class SubscriptionHistoryEntity extends BaseModel {

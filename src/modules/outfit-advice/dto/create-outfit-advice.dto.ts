@@ -1,5 +1,5 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator'
-import { GenderEnum } from 'src/common/enum/user'
+import { IsEnum, IsNotEmpty, IsNumber, IsString, MaxLength } from 'class-validator'
+import { GenderEnum } from 'src/modules/user/user.enum'
 
 export class CreateOutfitAdviceDTO {
   @IsNotEmpty()
@@ -12,10 +12,12 @@ export class CreateOutfitAdviceDTO {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50)
   clothingSize: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(50)
   skinColor: string
 
   @IsNotEmpty()
@@ -28,21 +30,26 @@ export class CreateOutfitAdviceDTO {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   currentStyle: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   desiredStyle: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   occupation: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(255)
   place: string
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(1000)
   occasion: string
 }

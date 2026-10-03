@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { Request } from 'express'
 import HTTP_RESPONSE from 'src/common/const/http-response'
-import { UserSubscriptionStatusEnum } from 'src/common/enum/user-subscription'
 import { response } from 'src/common/helper/common'
 import { PackageRepository } from '../package/package.repository'
 import { SubscriptionHistoryRepository } from '../subscription-history/subscription-history.repository'
 import { UserRepository } from '../user/user.repository'
 import { GetUserSubscriptionHistoryDTO } from './dto/get-user-subscription-history.dto'
 import { UpdateUserSubscriptionDTO } from './dto/update-user-subscription.dto'
+import { UserSubscriptionStatusEnum } from './user-subscription.enum'
 import { UserSubscriptionRepository } from './user-subscription.repository'
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { ExpenseTypeEnum } from 'src/common/enum/expense'
+import { ExpenseTypeEnum } from './expense.enum'
 
 export interface IExpenseByType {
   type: ExpenseTypeEnum

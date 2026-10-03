@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { Request } from 'express'
-import { AIService } from 'src/common/ai.service'
 import HTTP_RESPONSE from 'src/common/const/http-response'
-import { UserSubscriptionStatusEnum } from 'src/common/enum/user-subscription'
 import { response } from 'src/common/helper/common'
+import { INVALID_REFINE_FEEDBACK } from 'src/modules/ai/ai.constant'
+import { AIService } from 'src/modules/ai/ai.service'
 import { DataSource } from 'typeorm'
 import { UserSubscriptionEntity } from '../user-subscription/user-subscription.entity'
+import { UserSubscriptionStatusEnum } from '../user-subscription/user-subscription.enum'
 import { UserSubscriptionRepository } from '../user-subscription/user-subscription.repository'
 import { WardrobeEntity } from '../wardrobe/wardrobe.entity'
 import { WardrobeRepository } from '../wardrobe/wardrobe.repository'
@@ -13,6 +14,7 @@ import { CreateOutfitAdviceDTO } from './dto/create-outfit-advice.dto'
 import { GetListOutfitAdviceDTO } from './dto/get-list-outfit-advice.dto'
 import { RefineOutfitAdviceDTO } from './dto/refine-outfit-advice.dto'
 import { OutfitAdviceEntity } from './outfit-advice.entity'
+import { OutfitAdviceRatingEnum } from './outfit-advice.enum'
 import { OutfitAdviceRepository } from './outfit-advice.repository'
 
 @Injectable()
@@ -32,13 +34,13 @@ export class OutfitAdviceService {
 
     const userSubscription = await this.userSubscriptionRepository.getSubscriptionByUserId(userId)
     if (!userSubscription) return response({}, true, HTTP_RESPONSE.USER.USER_SUBSCRIPTION_NOT_EXIST)
-    if (userSubscription.usedQuota === userSubscription.quota)
+    if (userSubscription.usedQuota >= userSubscription.quota)
       return response({}, true, HTTP_RESPONSE.USER_SUBSCRIPTION.USED_UP_ALL_AVAILABLE_CONSULTATIONS)
     if (userSubscription.status !== UserSubscriptionStatusEnum.ACTIVE)
       return response({}, true, HTTP_RESPONSE.USER_SUBSCRIPTION.SUBSCRIPTION_EXPIRED)
 
     if (userSubscription.package.price) {
-      wardrobes = await this.wardrobeRepository.findMany({ userId })
+      wardrobes = await this.wardrobeRepository.findMany({ userId }, { itemType: true })
       outfitAdviceHistory = await this.outfitAdviceRepository.getListOutfitAdvice(
         { pageSize: 3, currentPage: 1, textSearch: '' },
         userId,
@@ -87,8 +89,12 @@ export class OutfitAdviceService {
   }
 
   async refineOutfitAdvice(req: Request, body: RefineOutfitAdviceDTO) {
-    const { outfitAdviceId, rating, feedback } = body
+    const { outfitAdviceId, rating } = body
+    const feedback = body.feedback?.trim() || undefined
     const userId = req.user.id
+
+    if (!feedback && rating >= OutfitAdviceRatingEnum.GOOD)
+      return response({}, true, HTTP_RESPONSE.OUTFIT_ADVICE.REFINE_FEEDBACK_REQUIRED)
 
     const targetOutfitAdvice = await this.outfitAdviceRepository.findOne({ id: outfitAdviceId, userId })
     if (!targetOutfitAdvice) return response({}, true, HTTP_RESPONSE.OUTFIT_ADVICE.OUTFIT_ADVICE_NOT_EXIST)
@@ -103,11 +109,27 @@ export class OutfitAdviceService {
     if (existingRefinements.length >= userSubscription.package.refine)
       return response({}, true, HTTP_RESPONSE.OUTFIT_ADVICE.REFINE_LIMIT_REACHED)
 
-    const { answer, inputToken, outputToken } = await this.aiService.refineOutfitAdvice(
-      targetOutfitAdvice.responsePayload,
+    const rootAdvice = targetOutfitAdvice.parentAdviceId
+      ? await this.outfitAdviceRepository.findOne({ id: rootAdviceId, userId })
+      : targetOutfitAdvice
+    const payload: unknown = rootAdvice!.requestPayload
+    const originalRequest = (typeof payload === 'string' ? JSON.parse(payload) : payload) as
+      | CreateOutfitAdviceDTO
+      | undefined
+    const wardrobes = userSubscription.package.price
+      ? await this.wardrobeRepository.findMany({ userId }, { itemType: true })
+      : undefined
+
+    const { answer, inputToken, outputToken } = await this.aiService.refineOutfitAdvice({
+      previousAnswer: targetOutfitAdvice.responsePayload,
       feedback,
-      rating
-    )
+      originalRequest,
+      packageName: userSubscription.package.name,
+      wardrobes
+    })
+
+    if (answer.includes(INVALID_REFINE_FEEDBACK))
+      return response({}, true, HTTP_RESPONSE.OUTFIT_ADVICE.INVALID_REFINE_FEEDBACK)
 
     const newOutfitAdvice = await this.outfitAdviceRepository.insertOne({
       userId,
