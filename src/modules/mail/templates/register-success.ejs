@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chào mừng bạn đến với MặcGì</title>
+  </head>
+  <body
+    style="margin: 0; padding: 0; background-color: #f4f4f7; font-family: Arial, Helvetica, sans-serif; color: #333333"
+  >
+    <table
+      role="presentation"
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      style="background-color: #f4f4f7; padding: 24px 0"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            width="600"
+            cellpadding="0"
+            cellspacing="0"
+            style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden"
+          >
+            <tr>
+              <td style="background-color: #111827; padding: 24px; text-align: center">
+                <h1 style="margin: 0; color: #ffffff; font-size: 28px">MặcGì</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 32px 24px; font-size: 15px; line-height: 1.6">
+                <p style="margin: 0 0 16px">Xin chào <strong><%= fullName %></strong>,</p>
+                <p style="margin: 0 0 16px">
+                  Chúc mừng bạn đã đăng ký tài khoản thành công! Cảm ơn bạn đã tin tưởng để chúng tôi đồng hành cùng bạn
+                  trong việc lựa chọn trang phục mỗi ngày.
+                </p>
+
+                <table
+                  role="presentation"
+                  width="100%"
+                  cellpadding="0"
+                  cellspacing="0"
+                  style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; margin: 0 0 16px"
+                >
+                  <tr>
+                    <td style="padding: 16px 20px">
+                      <p style="margin: 0 0 8px; font-size: 16px">
+                        <strong>🎁 Quà tặng dành cho bạn: Gói tư vấn Miễn phí</strong>
+                      </p>
+                      <ul style="margin: 0; padding-left: 20px">
+                        <li><strong>2 lượt tư vấn</strong> mỗi tháng</li>
+                        <li>Số lượt sẽ được <strong>làm mới mỗi tháng</strong></li>
+                        <li>Lượt chưa dùng hết trong tháng sẽ không được cộng dồn sang tháng sau</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+
+                <p style="margin: 0 0 24px">Hãy bắt đầu ngay để nhận gợi ý phối đồ phù hợp nhất với bạn!</p>
+
+                <p style="text-align: center; margin: 0 0 24px">
+                  <a
+                    href="<%= outfitAdviceUrl %>"
+                    target="_blank"
+                    style="
+                      display: inline-block;
+                      background-color: #111827;
+                      color: #ffffff;
+                      text-decoration: none;
+                      padding: 12px 28px;
+                      border-radius: 6px;
+                      font-weight: bold;
+                    "
+                    >Bắt đầu tư vấn</a
+                  >
+                </p>
+
+                <p style="margin: 0">Trân trọng,<br />Đội ngũ <strong>MặcGì</strong></p>
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  background-color: #f9fafb;
+                  padding: 16px 24px;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #9ca3af;
+                "
+              >
+                Email này được gửi tự động, vui lòng không trả lời email này.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

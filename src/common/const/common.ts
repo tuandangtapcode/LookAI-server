@@ -5,9 +5,14 @@ export const ALLOW_ORIGINS = [
   'https://stylist-ai.tdtc.io.vn'
 ]
 
+export const QUEUE_NAME = {
+  MAIL: 'mail'
+}
+
+export const MAIL_JOB = {
+  SEND_MAIL: 'send-mail'
+}
+
 export const TEMPLATE_MAIL = {
-  CHANGE_SUBJECT_SETTING_STATUS: 'change-subject-setting-status',
-  CREATE_BOOKING: 'create-booking',
-  CHANGE_BOOKING_STATUS: 'change-booking-status',
-  UPDATE_WITHDRAW_REQUEST: 'update-withdraw-request'
+  REGISTER_SUCCESS: 'register-success'
 }

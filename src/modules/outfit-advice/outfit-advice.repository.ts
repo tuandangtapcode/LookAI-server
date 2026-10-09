@@ -73,8 +73,8 @@ export class OutfitAdviceRepository extends BaseRepository<OutfitAdviceEntity> {
         'SUM(oa.output_token) as totalOutputToken'
       ])
       .innerJoin('user', 'u', 'u.id = oa.user_id')
-      .orderBy('totalInputToken', 'DESC')
       .groupBy('oa.user_id')
+      .orderBy('totalInputToken', 'DESC')
       .limit(5)
 
     if (forMonth && forYear) {

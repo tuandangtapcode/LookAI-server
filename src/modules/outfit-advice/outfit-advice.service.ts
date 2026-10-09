@@ -55,37 +55,29 @@ export class OutfitAdviceService {
       outfitAdviceHistory
     })
 
-    const queryRunner = this.dataSource.createQueryRunner()
-    await queryRunner.connect()
-    await queryRunner.startTransaction()
+    const newOutfitAdvice = await this.dataSource.transaction(async (manager) => {
+      const userSubscriptionRepo = manager.getRepository(UserSubscriptionEntity)
+      const outfitAdviceRepo = manager.getRepository(OutfitAdviceEntity)
 
-    try {
-      const userSubscriptionRepo = queryRunner.manager.getRepository(UserSubscriptionEntity)
-      const outfitAdviceRepo = queryRunner.manager.getRepository(OutfitAdviceEntity)
-
-      const createOutfitAdvice = outfitAdviceRepo.create({
-        userId,
-        package: userSubscription.package,
-        requestPayload,
-        responsePayload: answer,
-        inputToken,
-        outputToken
-      })
-      const newOutfitAdvice = await outfitAdviceRepo.save(createOutfitAdvice)
+      const createdOutfitAdvice = await outfitAdviceRepo.save(
+        outfitAdviceRepo.create({
+          userId,
+          package: userSubscription.package,
+          requestPayload,
+          responsePayload: answer,
+          inputToken,
+          outputToken
+        })
+      )
 
       await userSubscriptionRepo.update(userSubscription.id, {
         usedQuota: () => 'used_quota + 1'
       })
 
-      await queryRunner.commitTransaction()
+      return createdOutfitAdvice
+    })
 
-      return response(newOutfitAdvice, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
-    } catch (error) {
-      await queryRunner.rollbackTransaction()
-      throw error
-    } finally {
-      await queryRunner.release()
-    }
+    return response(newOutfitAdvice, false, HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS)
   }
 
   async refineOutfitAdvice(req: Request, body: RefineOutfitAdviceDTO) {

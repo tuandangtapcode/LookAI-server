@@ -24,8 +24,8 @@ export class AuthController {
   }
 
   @Get('check-auth')
-  checkAuth(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    return this.authService.checkAuth(req, res)
+  checkAuth(@Req() req: Request) {
+    return this.authService.checkAuth(req)
   }
 
   @UseGuards(AuthGuard, RoleGuard)
@@ -35,10 +35,13 @@ export class AuthController {
     return this.authService.getDetailProfile(req, res)
   }
 
-  @UseGuards(AuthGuard, RoleGuard)
-  @Roles(UserRoleEnum.ADMIN, UserRoleEnum.USER, UserRoleEnum.STYLIST)
   @Get('logout')
-  logout(@Res({ passthrough: true }) res: Response) {
-    return this.authService.logout(res)
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return await this.authService.logout(req, res)
+  }
+
+  @Get('refresh')
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return await this.authService.refresh(req, res)
   }
 }

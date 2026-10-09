@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common'
 import { OAuth2Client } from 'google-auth-library'
 import env from 'src/config/env'
+import { MailModule } from '../mail/mail.module'
 import { PackageModule } from '../package/package.module'
+import { RedisModule } from '../redis/redis.module'
 import { UserModule } from '../user/user.module'
 import { GOOGLE_OAUTH_CLIENT } from './auth.constant'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 
 @Module({
-  imports: [UserModule, PackageModule],
+  imports: [UserModule, PackageModule, MailModule, RedisModule],
   controllers: [AuthController],
   providers: [
     {

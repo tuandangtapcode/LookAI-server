@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq'
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_FILTER } from '@nestjs/core'
@@ -6,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { HttpExceptionFilter } from './common/filters/http-exceptions.filter'
 import { RequestContextMiddleware } from './common/middlewares/request-context.middleware'
 import { connectDataSourceConfig } from './config/database'
+import env from './config/env'
 import { AuthModule } from './modules/auth/auth.module'
 import { DashboardModule } from './modules/dashboard/dashboard.module'
 import { ExpenseModule } from './modules/expense/expense.module'
@@ -26,6 +28,14 @@ import { WardrobeModule } from './modules/wardrobe/wardrobe.module'
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot(connectDataSourceConfig),
     ScheduleModule.forRoot(),
+    BullModule.forRoot({
+      connection: {
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
+        username: env.REDIS_USER_NAME,
+        password: env.REDIS_PASSWORD
+      }
+    }),
     SystemkeyModule,
     AuthModule,
     UserModule,

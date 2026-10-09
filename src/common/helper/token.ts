@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import jwt from 'jsonwebtoken'
 import env from 'src/config/env'
 import { ITokenData } from 'src/modules/auth/auth.interface'
@@ -26,7 +26,8 @@ export const verifyAccessToken = (token: string) => {
     const tokenData: ITokenData = {
       id: payload.id,
       name: payload.name,
-      role: payload.role
+      role: payload.role,
+      jti: payload.jti
     }
 
     return {
@@ -54,7 +55,8 @@ export const verifyRefreshToken = (token: string) => {
     const tokenData: ITokenData = {
       id: payload.id,
       name: payload.name,
-      role: payload.role
+      role: payload.role,
+      jti: payload.jti
     }
 
     return {
@@ -76,7 +78,7 @@ export const verifyRefreshToken = (token: string) => {
   }
 }
 
-export const handleToken = (request: Request, response: Response) => {
+export const checkAccessToken = (request: Request) => {
   const accessToken: string = request.cookies[env.ACCESS_TOKEN]
   if (!accessToken) {
     return {
@@ -87,7 +89,6 @@ export const handleToken = (request: Request, response: Response) => {
   }
 
   const { data, message } = verifyAccessToken(accessToken)
-  // nếu có dữ liệu trong access token và không có lỗi nào xảy ra thì cho phép truy cập
   if (data) {
     return {
       error: false,
@@ -96,7 +97,6 @@ export const handleToken = (request: Request, response: Response) => {
     }
   }
 
-  // nếu có lỗi xảy ra và lỗi đó không phải là lỗi token hết hạn
   if (message && message !== HTTP_RESPONSE.AUTHORIZATION.TOKEN_EXPIRED) {
     return {
       error: true,
@@ -105,50 +105,17 @@ export const handleToken = (request: Request, response: Response) => {
     }
   }
 
-  // nếu lỗi là lỗi token hết hạn thì kiểm tra refresh token
   if (message && message === HTTP_RESPONSE.AUTHORIZATION.TOKEN_EXPIRED) {
-    const refreshToken = request.cookies[env.REFRESH_TOKEN]
-    if (!refreshToken) {
-      return {
-        error: true,
-        tokenData: null,
-        reason: HTTP_RESPONSE.AUTHORIZATION.TOKEN_NOT_EXIST
-      }
-    }
-
-    const { data, message } = verifyRefreshToken(refreshToken)
-    // nếu có lỗi xảy ra khi verify refresh token
-    if (message) {
-      return {
-        error: true,
-        tokenData: null,
-        reason: message
-      }
-    }
-
-    // nếu có dữ liệu trong refresh token thì tạo mới access token và refresh token
-    if (data) {
-      const newAccessToken = generateAccessToken(data)
-
-      response.cookie(env.ACCESS_TOKEN, newAccessToken, {
-        httpOnly: true, // cookie chỉ được truy cập bới server
-        secure: true, // cookie chỉ được sử dụng với https
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-      })
-
-      return {
-        error: false,
-        tokenData: data,
-        reason: HTTP_RESPONSE.COMMON.GET_DATA_SUCCESS
-      }
+    return {
+      error: true,
+      tokenData: null,
+      reason: HTTP_RESPONSE.AUTHORIZATION.TOKEN_EXPIRED
     }
   }
 
-  // trừ các trường hợp được xử lý ở trên
   return {
     error: true,
     tokenData: null,
-    reason: HTTP_RESPONSE.AUTHORIZATION.TOKEN_NOT_EXIST
+    reason: HTTP_RESPONSE.AUTHORIZATION.TOKEN_INVALID
   }
 }

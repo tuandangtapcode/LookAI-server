@@ -10,6 +10,13 @@ const env = {
   MAIL_TRANSPORT_HOST: String(process.env.MAIL_TRANSPORT_HOST),
   MAIL_AUTH_USERNAME: String(process.env.MAIL_AUTH_USERNAME),
   MAIL_AUTH_PASSWORD: String(process.env.MAIL_AUTH_PASSWORD),
+  // REDIS
+  REDIS_HOST: String(process.env.REDIS_HOST),
+  REDIS_PORT: Number(process.env.REDIS_PORT),
+  REDIS_USER_NAME: String(process.env.REDIS_USER_NAME),
+  REDIS_PASSWORD: String(process.env.REDIS_PASSWORD),
+  // CLIENT
+  CLIENT_URL: String(process.env.CLIENT_URL),
   // COOKIES
   MAX_AGE_ACCESS_TOKEN_COOKIES: Number(process.env.MAX_AGE_ACCESS_TOKEN_COOKIES),
   MAX_AGE_REFRESH_TOKEN_COOKIES: Number(process.env.MAX_AGE_REFRESH_TOKEN_COOKIES),
